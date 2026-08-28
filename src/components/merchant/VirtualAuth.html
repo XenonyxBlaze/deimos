@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ServeSmile Virtual Auth & Registration</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap');
+    * { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
+    .active-press:active { transform: scale(0.97); }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fade-in { animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+  </style>
+</head>
+<body class="bg-stone-950 text-stone-100 min-h-screen flex flex-col justify-center items-center p-4 select-none relative overflow-hidden antialiased">
+
+  <!-- Background Ambient Glow -->
+  <div class="absolute -top-32 -left-32 w-80 h-80 bg-orange-500/15 rounded-full blur-3xl pointer-events-none"></div>
+  <div class="absolute -bottom-32 -right-32 w-80 h-80 bg-amber-500/15 rounded-full blur-3xl pointer-events-none"></div>
+
+  <!-- Multi-Language Pill Switcher -->
+  <div class="w-full max-w-sm mb-3 flex items-center justify-between px-2">
+    <div class="flex items-center gap-1 text-[11px] text-stone-400 font-bold">
+      <i data-lucide="globe" class="w-3.5 h-3.5 text-orange-400"></i>
+      <span>Language:</span>
+    </div>
+    <div class="flex gap-1 bg-stone-900/90 border border-white/10 p-1 rounded-xl">
+      <button onclick="setLang('en')" class="lang-btn active px-2.5 py-0.5 rounded-lg text-[10px] font-black bg-orange-500 text-white">EN</button>
+      <button onclick="setLang('hi')" class="lang-btn px-2.5 py-0.5 rounded-lg text-[10px] font-bold text-stone-400 hover:text-white">हिन्दी</button>
+      <button onclick="setLang('pa')" class="lang-btn px-2.5 py-0.5 rounded-lg text-[10px] font-bold text-stone-400 hover:text-white">ਪੰਜਾਬੀ</button>
+      <button onclick="setLang('gu')" class="lang-btn px-2.5 py-0.5 rounded-lg text-[10px] font-bold text-stone-400 hover:text-white">ગુજરાતી</button>
+    </div>
+  </div>
+
+  <!-- Auth Card Container -->
+  <div class="w-full max-w-sm bg-stone-900/90 border border-white/10 p-5 rounded-3xl shadow-2xl space-y-4 relative z-10 backdrop-blur-xl animate-fade-in">
+    <!-- Brand Header -->
+    <div class="text-center space-y-1.5">
+      <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-orange-500 to-amber-500 p-2.5 mx-auto flex items-center justify-center shadow-lg shadow-orange-500/25 ring-4 ring-orange-500/10">
+        <i data-lucide="store" class="w-6 h-6 text-white"></i>
+      </div>
+      <div>
+        <h1 class="text-lg font-black text-white tracking-tight" id="txt-app-title">ServeSmile Merchant</h1>
+        <p class="text-[10px] text-stone-400 font-medium" id="txt-app-desc">Sign in or register to manage your store POS terminal</p>
+      </div>
+    </div>
+
+    <!-- Mode Switcher Tabs -->
+    <div class="p-1 bg-stone-950/80 rounded-2xl border border-white/10 flex items-center">
+      <button id="tab-login" onclick="setMode('login')" class="flex-1 py-1.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-xs">
+        <span>Sign In</span>
+      </button>
+      <button id="tab-register" onclick="setMode('register')" class="flex-1 py-1.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 text-stone-400 hover:text-white bg-transparent">
+        <i data-lucide="sparkles" class="w-3 h-3 text-amber-400"></i>
+        <span>Create Account</span>
+      </button>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <form id="form-login" class="space-y-3">
+      <div>
+        <label class="block text-[11px] font-bold text-stone-300 mb-1" for="login-id">Email or Mobile Number</label>
+        <div class="relative">
+          <i data-lucide="user" class="w-4 h-4 text-stone-400 absolute left-3 top-3 pointer-events-none"></i>
+          <input id="login-id" type="text" value="" placeholder="e.g. aarav@servesmile.com" class="w-full bg-stone-950 border border-white/10 rounded-2xl pl-9 pr-3 py-2.5 text-xs text-white placeholder-stone-500 focus:outline-none focus:border-orange-500 font-medium">
+        </div>
+      </div>
+
+      <div>
+        <div class="flex justify-between items-center mb-1">
+          <label class="text-[11px] font-bold text-stone-300" for="login-pw">Password</label>
+          <span class="text-[10px] text-orange-400 font-bold hover:underline cursor-pointer">Forgot?</span>
+        </div>
+        <div class="relative">
+          <i data-lucide="lock" class="w-4 h-4 text-stone-400 absolute left-3 top-3 pointer-events-none"></i>
+          <input id="login-pw" type="password" value="" placeholder="••••••••••••" class="w-full bg-stone-950 border border-white/10 rounded-2xl pl-9 pr-9 py-2.5 text-xs text-white placeholder-stone-500 focus:outline-none focus:border-orange-500 font-medium">
+          <i data-lucide="eye" class="w-4 h-4 text-stone-400 absolute right-3 top-3 cursor-pointer"></i>
+        </div>
+      </div>
+
+      <button type="button" onclick="submitAuth()" class="w-full py-3 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black text-xs uppercase tracking-wider rounded-2xl shadow-lg shadow-orange-500/20 active-press flex items-center justify-center gap-1.5 mt-2">
+        <span>Sign In to Merchant Portal</span>
+        <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+      </button>
+    </form>
+
+    <!-- REGISTER FORM -->
+    <form id="form-register" class="space-y-2.5 hidden">
+      <div>
+        <label class="block text-[10px] font-bold text-stone-300 mb-0.5" for="reg-name">Merchant Full Name *</label>
+        <div class="relative">
+          <i data-lucide="user" class="w-3.5 h-3.5 text-stone-400 absolute left-3 top-2.5 pointer-events-none"></i>
+          <input id="reg-name" type="text" placeholder="e.g. Aarav Rajput" class="w-full bg-stone-950 border border-white/10 rounded-xl pl-8 pr-3 py-2 text-xs text-white placeholder-stone-500 focus:outline-none focus:border-orange-500 font-medium">
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2">
+        <div>
+          <label class="block text-[10px] font-bold text-stone-300 mb-0.5" for="reg-phone">Mobile *</label>
+          <input id="reg-phone" type="tel" placeholder="9540795054" class="w-full bg-stone-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-stone-500 focus:outline-none focus:border-orange-500 font-medium">
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-stone-300 mb-0.5" for="reg-email">Email</label>
+          <input id="reg-email" type="email" placeholder="owner@store.com" class="w-full bg-stone-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-stone-500 focus:outline-none focus:border-orange-500 font-medium">
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2">
+        <div>
+          <label class="block text-[10px] font-bold text-stone-300 mb-0.5" for="reg-pw">Password *</label>
+          <input id="reg-pw" type="password" placeholder="••••••••" class="w-full bg-stone-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-stone-500 focus:outline-none focus:border-orange-500 font-medium">
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-stone-300 mb-0.5" for="reg-referral">Partner Referral</label>
+          <input id="reg-referral" type="text" placeholder="CARD-PARTNER99" class="w-full bg-stone-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-stone-500 focus:outline-none focus:border-orange-500 font-medium font-mono">
+        </div>
+      </div>
+
+      <div class="flex items-start gap-2 pt-1">
+        <input type="checkbox" id="reg-terms" checked class="mt-0.5 rounded border-stone-700 text-orange-500 focus:ring-orange-500">
+        <label for="reg-terms" class="text-[10px] text-stone-400 leading-tight">
+          I agree to the <span class="text-orange-400 font-bold">Partner Terms & Privacy Policy</span>.
+        </label>
+      </div>
+
+      <button type="button" onclick="submitAuth()" class="w-full py-2.5 bg-gradient-to-r from-orange-500 to-amber-500 text-white font-black text-xs uppercase tracking-wider rounded-2xl shadow-lg shadow-orange-500/20 active-press flex items-center justify-center gap-1.5 mt-1">
+        <span>Create Account & Get Code</span>
+        <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+      </button>
+    </form>
+
+    <div class="text-center pt-1 border-t border-white/5">
+      <div class="text-[9px] text-stone-500 font-mono flex items-center justify-center gap-1">
+        <i data-lucide="shield-check" class="w-3 h-3 text-emerald-400"></i>
+        <span>Bank-Grade 256-bit Encrypted Merchant Terminal</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    lucide.createIcons();
+
+    function setMode(mode) {
+      if (mode === 'login') {
+        document.getElementById('tab-login').className = 'flex-1 py-1.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-xs';
+        document.getElementById('tab-register').className = 'flex-1 py-1.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 text-stone-400 hover:text-white bg-transparent';
+        document.getElementById('form-login').classList.remove('hidden');
+        document.getElementById('form-register').classList.add('hidden');
+      } else {
+        document.getElementById('tab-register').className = 'flex-1 py-1.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-xs';
+        document.getElementById('tab-login').className = 'flex-1 py-1.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 text-stone-400 hover:text-white bg-transparent';
+        document.getElementById('form-register').classList.remove('hidden');
+        document.getElementById('form-login').classList.add('hidden');
+      }
+    }
+
+    function setLang(lang) {
+      document.querySelectorAll('.lang-btn').forEach(b => b.className = 'lang-btn px-2.5 py-0.5 rounded-lg text-[10px] font-bold text-stone-400 hover:text-white');
+      event.currentTarget.className = 'lang-btn active px-2.5 py-0.5 rounded-lg text-[10px] font-black bg-orange-500 text-white';
+    }
+
+    function submitAuth() {
+      // Mock submit handler
+    }
+
+    window.authTwin = {
+      setMode: (m) => setMode(m),
+      fillLogin: (id, pw) => {
+        document.getElementById('login-id').value = id;
+        document.getElementById('login-pw').value = pw;
+      },
+      fillRegister: (name, phone, email, pw, ref) => {
+        document.getElementById('reg-name').value = name;
+        document.getElementById('reg-phone').value = phone;
+        document.getElementById('reg-email').value = email;
+        document.getElementById('reg-pw').value = pw;
+        document.getElementById('reg-referral').value = ref;
+      }
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ServeSmile Virtual Customer Wallet & Member Pass</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap');
+    * { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
+    .hologram-card {
+      background: linear-gradient(135deg, #1e1b4b 0%, #311042 35%, #18181b 70%, #064e3b 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .hologram-card::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.15) 50%, transparent 60%);
+      transform: rotate(30deg);
+      animation: holoShine 4s infinite linear;
+    }
+    @keyframes holoShine {
+      0% { transform: translateY(-100%) rotate(30deg); }
+      100% { transform: translateY(100%) rotate(30deg); }
+    }
+  </style>
+</head>
+<body class="bg-stone-950 text-stone-100 min-h-screen flex flex-col select-none antialiased">
+
+  <header class="sticky top-0 z-40 bg-stone-900/95 backdrop-blur-xl border-b border-white/10 px-4 py-3 flex items-center justify-between shadow-lg">
+    <div class="flex items-center gap-2">
+      <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-amber-500 to-orange-500 text-white flex items-center justify-center">
+        <i data-lucide="sparkles" class="w-4 h-4"></i>
+      </div>
+      <div>
+        <div class="text-xs font-black text-white">ServeSmile Member Pass</div>
+        <div class="text-[9px] text-stone-400 font-medium">Instant 20% savings across partners</div>
+      </div>
+    </div>
+    <div class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-black font-mono border border-emerald-500/30">
+      VERIFIED PASS
+    </div>
+  </header>
+
+  <main class="flex-1 p-4 space-y-4 max-w-md mx-auto w-full pb-20">
+
+    <!-- 3D Holographic Membership Card -->
+    <div class="hologram-card p-5 rounded-3xl border-2 border-amber-500/40 shadow-2xl space-y-4">
+      <div class="flex justify-between items-start">
+        <div class="space-y-0.5">
+          <div class="text-[10px] font-black tracking-widest uppercase text-amber-400 font-mono">SERVESMILE PLATINUM PASS</div>
+          <div class="text-base font-black text-white tracking-tight">Aarav Rajput</div>
+          <div class="text-[10px] text-stone-300 font-mono">@aarav_alqasr</div>
+        </div>
+        <div class="px-2.5 py-1 rounded-xl bg-amber-500/30 border border-amber-500/50 text-amber-300 text-xs font-black font-mono">
+          20% OFF
+        </div>
+      </div>
+
+      <div class="flex justify-between items-end pt-3 border-t border-white/10">
+        <div>
+          <div class="text-[8px] text-stone-400 uppercase font-mono">Card Serial Token</div>
+          <div class="text-[11px] font-mono text-white font-bold">SS-CARD-2026-9054</div>
+        </div>
+        <div class="text-right">
+          <div class="text-[8px] text-stone-400 uppercase font-mono">Lifetime Savings</div>
+          <div class="text-sm font-black text-emerald-400 font-mono">₹14,850.00</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cryptographic Dynamic QR Code Magazine -->
+    <div class="bg-stone-900/90 p-4 rounded-3xl border border-white/10 text-center space-y-2.5 shadow-xl">
+      <div class="flex items-center justify-between">
+        <span class="text-[10px] font-black uppercase tracking-wider text-stone-300">Tap-to-Scan Dynamic QR</span>
+        <span class="text-[9px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-mono font-bold">
+          ⚡ 0ms OFFLINE ED25519
+        </span>
+      </div>
+
+      <div class="p-3 bg-white rounded-2xl w-48 h-48 mx-auto flex items-center justify-center shadow-lg" id="customer-qr-box"></div>
+
+      <div class="text-[10px] text-stone-400 font-mono">
+        Auto-refreshes in <span class="text-orange-400 font-bold" id="qr-refresh-timer">28s</span> for security
+      </div>
+    </div>
+
+    <!-- Nearby Partner Stores Radar -->
+    <div class="bg-stone-900/70 p-3.5 rounded-2xl border border-white/10 space-y-2">
+      <div class="flex justify-between items-center">
+        <span class="text-[10px] font-black uppercase text-stone-300">Nearby Discount Partners</span>
+        <span class="text-[9px] text-orange-400 font-bold">Gurgaon Cyber Hub</span>
+      </div>
+
+      <div class="space-y-1.5 text-xs">
+        <div class="flex justify-between items-center p-2 bg-stone-950 rounded-xl border border-white/5">
+          <div class="flex items-center gap-2">
+            <div class="w-6 h-6 rounded-lg bg-orange-500 text-white flex items-center justify-center font-bold text-[10px]">
+              AQ
+            </div>
+            <div>
+              <div class="font-bold text-white text-[11px]">Al Qasr Fine Dining & Grill</div>
+              <div class="text-[9px] text-stone-400">Cyber Hub • 0.3 km away</div>
+            </div>
+          </div>
+          <span class="text-xs font-black text-amber-400 font-mono">20% OFF</span>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    lucide.createIcons();
+
+    function drawRealisticQR(canvas, size) {
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, size, size);
+      ctx.fillStyle = '#000000';
+      
+      const grid = 21;
+      const cell = size / grid;
+      
+      function drawFinder(r, c) {
+        ctx.fillRect(c * cell, r * cell, 7 * cell, 7 * cell);
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect((c + 1) * cell, (r + 1) * cell, 5 * cell, 5 * cell);
+        ctx.fillStyle = '#000000';
+        ctx.fillRect((c + 2) * cell, (r + 2) * cell, 3 * cell, 3 * cell);
+      }
+      
+      drawFinder(0, 0);
+      drawFinder(0, 14);
+      drawFinder(14, 0);
+      
+      for (let r = 0; r < grid; r++) {
+        for (let c = 0; c < grid; c++) {
+          if ((r < 8 && c < 8) || (r < 8 && c >= 13) || (r >= 13 && c < 8)) continue;
+          if ((r * 7 + c * 13 + (r % 3)) % 2 === 0) {
+            ctx.fillRect(c * cell, r * cell, cell - 0.5, cell - 0.5);
+          }
+        }
+      }
+    }
+
+    // Generate Dynamic Token QR
+    const qrBox = document.getElementById('customer-qr-box');
+    const qrCanvas = document.createElement('canvas');
+    qrCanvas.width = 170;
+    qrCanvas.height = 170;
+    drawRealisticQR(qrCanvas, 170);
+    qrBox.appendChild(qrCanvas);
+  </script>
+</body>
+</html>
