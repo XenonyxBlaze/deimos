@@ -175,7 +175,7 @@ class StudioEngine:
         wav_path = os.path.join(ASSETS_DIR, f"{scene_id}.wav")
         mp3_path = os.path.join(ASSETS_DIR, f"{scene_id}.mp3")
         
-        communicate = edge_tts.Communicate(text, self.voice, rate="+1%", pitch="+0Hz")
+        communicate = edge_tts.Communicate(text, self.voice, rate="-7%", pitch="+0Hz")
         await communicate.save(mp3_path)
         
         subprocess.run([
@@ -220,30 +220,55 @@ class StudioEngine:
             actions = scene.get("actions", [])
             for act in actions:
                 act_type = act.get("type")
-                await page.wait_for_timeout(int(act.get("wait_before", 0.6) * 1000))
-                
+                wait_before = act.get("wait_before", 0.5)
+                if wait_before > 0:
+                    await page.wait_for_timeout(int(wait_before * 1000))
+                    
                 if act_type == "spotlight":
-                    sel = act.get("selector")
-                    scale = act.get("scale", 1.18)
-                    await page.evaluate("(args) => window.spotlight(args.sel, args.scale)", {"sel": sel, "scale": scale})
+                    sel = act["selector"]
+                    scale = act.get("scale", 1.08)
+                    await page.evaluate(f"window.spotlight('{sel}', {scale});")
                 elif act_type == "clear_spotlight":
-                    await page.evaluate("() => window.clearSpotlight()")
+                    await page.evaluate("window.clearSpotlight();")
                 elif act_type == "cursor_move":
-                    x, y = act.get("x", 215), act.get("y", 400)
-                    await page.evaluate("(args) => window.moveCursor(args.x, args.y)", {"x": x, "y": y})
+                    x = act.get("x", 215)
+                    y = act.get("y", 466)
+                    await page.evaluate(f"window.moveCursor({x}, {y});")
                 elif act_type == "tap":
-                    x, y = act.get("x", 215), act.get("y", 400)
-                    await page.evaluate("(args) => { window.moveCursor(args.x, args.y); window.clickCursor(args.x, args.y); }", {"x": x, "y": y})
-                    selector = act.get("selector")
-                    if selector:
-                        el = await page.query_selector(selector)
-                        if el: await el.click()
+                    x = act.get("x", 215)
+                    y = act.get("y", 466)
+                    sel = act.get("selector")
+                    if sel:
+                        await page.evaluate(f"""(() => {{
+                            const el = document.querySelector('{sel}');
+                            if (el) {{
+                                const rect = el.getBoundingClientRect();
+                                window.moveCursor(rect.left + rect.width/2, rect.top + rect.height/2);
+                            }}
+                        }})();""")
+                        await page.wait_for_timeout(300)
+                    else:
+                        await page.evaluate(f"window.moveCursor({x}, {y});")
+                        await page.wait_for_timeout(300)
+                    await page.evaluate(f"window.clickCursor({x}, {y});")
+                    if sel:
+                        try:
+                            await page.click(sel, timeout=1000)
+                        except:
+                            pass
                 elif act_type == "type":
-                    selector = act.get("selector")
-                    text = act.get("text", "")
-                    if selector:
-                        el = await page.query_selector(selector)
-                        if el: await el.type(text, delay=80)
+                    sel = act["selector"]
+                    txt = act["text"]
+                    await page.evaluate(f"""(() => {{
+                        const el = document.querySelector('{sel}');
+                        if (el) {{
+                            const rect = el.getBoundingClientRect();
+                            window.moveCursor(rect.left + rect.width/2, rect.top + rect.height/2);
+                        }}
+                    }})();""")
+                    await page.wait_for_timeout(250)
+                    await page.fill(sel, "")
+                    await page.type(sel, txt, delay=75)
                 elif act_type == "call_js":
                     js_code = act.get("code", "")
                     if js_code:
@@ -290,11 +315,11 @@ class StudioEngine:
         out_writer = cv2.VideoWriter(temp_avi, fourcc, FPS, (WIDTH, HEIGHT))
         
         try:
-            font_title = ImageFont.truetype("arialbd.ttf", 40)
-            font_sub = ImageFont.truetype("arial.ttf", 22)
-            font_badge = ImageFont.truetype("arialbd.ttf", 21)
-            font_narr = ImageFont.truetype("arial.ttf", 21)
-            font_step = ImageFont.truetype("arialbd.ttf", 16)
+            font_title = ImageFont.truetype("arialbd.ttf", 38)
+            font_sub = ImageFont.truetype("arial.ttf", 21)
+            font_badge = ImageFont.truetype("arialbd.ttf", 20)
+            font_narr = ImageFont.truetype("arial.ttf", 20)
+            font_step = ImageFont.truetype("arialbd.ttf", 15)
         except:
             font_title = ImageFont.load_default()
             font_sub = font_title
@@ -347,63 +372,79 @@ class StudioEngine:
                 draw.text((1365, 175), "1.2k+ Active Members", font=font_title, fill=(255, 255, 255))
                 
                 # Bottom Voiceover Card
-                draw.rounded_rectangle([320, 840, 1600, 960], radius=24, fill=(18, 18, 22, 240), outline=(55, 55, 65, 220), width=1)
-                draw.text((360, 860), "MERCHANT ADVANTAGE", font=font_step, fill=(249, 115, 22))
-                draw.text((360, 895), narration, font=font_narr, fill=(245, 245, 250))
+                words = narration.split(" ")
+                lines, cur = [], []
+                for w in words:
+                    cur.append(w)
+                    if len(" ".join(cur)) > 80:
+                        lines.append(" ".join(cur))
+                        cur = []
+                if cur: lines.append(" ".join(cur))
+                
+                card_h = 75 + len(lines) * 28
+                card_top = 1010 - card_h
+                draw.rounded_rectangle([260, card_top, 1660, 1010], radius=24, fill=(18, 18, 22, 245), outline=(55, 55, 65, 220), width=1)
+                draw.text((300, card_top + 20), "MERCHANT PLATFORM GUIDE", font=font_step, fill=(249, 115, 22))
+                
+                ny = card_top + 50
+                for l in lines:
+                    draw.text((300, ny), l, font=font_narr, fill=(245, 245, 250))
+                    ny += 28
             else:
                 # Standard Split Layout with Left Motion Graphic Storyboard
                 # Step & Badge
-                draw.rounded_rectangle([120, 110, 260, 144], radius=16, fill=(249, 115, 22, 45), outline=(249, 115, 22, 190), width=1)
-                draw.text((138, 118), f"STEP {step_num:02d} / {total_steps:02d}", font=font_step, fill=(255, 180, 90))
+                draw.rounded_rectangle([110, 100, 250, 134], radius=16, fill=(249, 115, 22, 45), outline=(249, 115, 22, 190), width=1)
+                draw.text((128, 108), f"STEP {step_num:02d} / {total_steps:02d}", font=font_step, fill=(255, 180, 90))
                 
-                draw.rounded_rectangle([120, 160, 780, 208], radius=20, fill=(30, 30, 36, 230), outline=(245, 158, 11, 150), width=1)
-                draw.text((140, 172), badge, font=font_badge, fill=(255, 205, 110))
+                draw.rounded_rectangle([110, 146, 780, 194], radius=20, fill=(30, 30, 36, 230), outline=(245, 158, 11, 150), width=1)
+                draw.text((130, 158), badge, font=font_badge, fill=(255, 205, 110))
                 
                 # Title & Subtitle
                 title_words = title.split(" ")
                 if len(title) > 28:
                     t_line1 = " ".join(title_words[:4])
                     t_line2 = " ".join(title_words[4:])
-                    draw.text((120, 230), t_line1, font=font_title, fill=(255, 255, 255))
-                    draw.text((120, 280), t_line2, font=font_title, fill=(255, 255, 255))
-                    sub_y = 340
+                    draw.text((110, 214), t_line1, font=font_title, fill=(255, 255, 255))
+                    draw.text((110, 260), t_line2, font=font_title, fill=(255, 255, 255))
+                    sub_y = 316
                 else:
-                    draw.text((120, 230), title, font=font_title, fill=(255, 255, 255))
-                    sub_y = 290
+                    draw.text((110, 214), title, font=font_title, fill=(255, 255, 255))
+                    sub_y = 268
                     
-                draw.text((120, sub_y), subtitle, font=font_sub, fill=(200, 200, 210))
+                draw.text((110, sub_y), subtitle, font=font_sub, fill=(200, 200, 210))
                 
                 # Key Performance Benefit Pill
-                draw.rounded_rectangle([120, sub_y + 40, 780, sub_y + 90], radius=18, fill=(16, 185, 129, 25), outline=(16, 185, 129, 160), width=1)
-                draw.text((140, sub_y + 54), benefit, font=font_step, fill=(52, 211, 153))
+                draw.rounded_rectangle([110, sub_y + 36, 780, sub_y + 82], radius=16, fill=(16, 185, 129, 25), outline=(16, 185, 129, 160), width=1)
+                draw.text((130, sub_y + 48), benefit, font=font_step, fill=(52, 211, 153))
                 
                 # Progress Bar
                 bar_w = 720
-                draw.rounded_rectangle([120, 520, 120 + bar_w, 528], radius=4, fill=(45, 45, 52))
+                draw.rounded_rectangle([110, 475, 110 + bar_w, 483], radius=4, fill=(45, 45, 52))
                 fill_w = int(bar_w * t)
                 if fill_w > 4:
-                    draw.rounded_rectangle([120, 520, 120 + fill_w, 528], radius=4, fill=(249, 115, 22))
+                    draw.rounded_rectangle([110, 475, 110 + fill_w, 483], radius=4, fill=(249, 115, 22))
                     
                 # Voiceover Card
-                draw.rounded_rectangle([120, 720, 960, 910], radius=24, fill=(20, 20, 24, 230), outline=(55, 55, 65, 220), width=1)
-                draw.text((150, 745), "MERCHANT DEMONSTRATION GUIDE", font=font_step, fill=(249, 115, 22))
-                
                 words = narration.split(" ")
-                lines = []
-                cur = []
+                lines, cur = [], []
                 for w in words:
                     cur.append(w)
-                    if len(" ".join(cur)) > 55:
+                    if len(" ".join(cur)) > 52:
                         lines.append(" ".join(cur))
                         cur = []
                 if cur: lines.append(" ".join(cur))
                 
-                ny = 778
-                for l in lines[:4]:
-                    draw.text((150, ny), l, font=font_narr, fill=(240, 240, 245))
+                card_h = 75 + len(lines) * 28
+                card_top = 940 - card_h
+                draw.rounded_rectangle([110, card_top, 980, 940], radius=24, fill=(20, 20, 24, 235), outline=(55, 55, 65, 220), width=1)
+                draw.text((140, card_top + 20), "STEP-BY-STEP ACTION GUIDE", font=font_step, fill=(249, 115, 22))
+                
+                ny = card_top + 50
+                for l in lines:
+                    draw.text((140, ny), l, font=font_narr, fill=(240, 240, 245))
                     ny += 28
                     
-                draw.text((120, 970), "ServeSmile Merchant OS  •  Empowering Retail & Dining Partners", font=font_sub, fill=(125, 125, 135))
+                draw.text((110, 975), "ServeSmile Merchant OS  •  Empowering Retail & Dining Partners", font=font_sub, fill=(125, 125, 135))
                 
             frame_bgr = cv2.cvtColor(np.array(pil_img), cv2.COLOR_RGB2BGR)
             out_writer.write(frame_bgr)

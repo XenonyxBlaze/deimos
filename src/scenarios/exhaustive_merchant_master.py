@@ -18,14 +18,14 @@ EXHAUSTIVE_11_SCREEN_SCENARIO = {
             "badge": "🌐 Regional Language Switcher",
             "benefit": "⚡ Zero Training Curve • Native Regional Dialects",
             "component": "merchant/VirtualAuth.html",
-            "narration": "ServeSmile Merchant is built for frictionless staff adoption. Switch instantly between English, Hindi, Punjabi, and Gujarati so your store managers and cashiers can operate comfortably in their preferred language.",
+            "narration": "Welcome to ServeSmile Merchant. On your first launch, you can personalize your operating language right from the top navigation bar. Tap between English, Hindi, Punjabi, or Gujarati. The entire interface adapts in real time, making it effortless for your counter staff and store managers to operate comfortably in their native language.",
             "actions": [
-                { "type": "spotlight", "selector": "#lang-bar", "scale": 1.08, "wait_before": 0.8 },
-                { "type": "tap", "x": 280, "y": 25, "selector": ".lang-btn:nth-child(2)", "wait_before": 0.8 },
-                { "type": "tap", "x": 340, "y": 25, "selector": ".lang-btn:nth-child(3)", "wait_before": 0.8 },
-                { "type": "tap", "x": 400, "y": 25, "selector": ".lang-btn:nth-child(4)", "wait_before": 0.8 },
-                { "type": "tap", "x": 220, "y": 25, "selector": ".lang-btn:nth-child(1)", "wait_before": 0.8 },
-                { "type": "clear_spotlight", "wait_before": 1.0 }
+                { "type": "spotlight", "selector": "#lang-bar", "scale": 1.08, "wait_before": 1.0 },
+                { "type": "tap", "x": 280, "y": 25, "selector": ".lang-btn:nth-child(2)", "wait_before": 1.2 },
+                { "type": "tap", "x": 340, "y": 25, "selector": ".lang-btn:nth-child(3)", "wait_before": 1.2 },
+                { "type": "tap", "x": 400, "y": 25, "selector": ".lang-btn:nth-child(4)", "wait_before": 1.2 },
+                { "type": "tap", "x": 220, "y": 25, "selector": ".lang-btn:nth-child(1)", "wait_before": 1.2 },
+                { "type": "clear_spotlight", "wait_before": 1.5 }
             ]
         },
 
@@ -38,21 +38,21 @@ EXHAUSTIVE_11_SCREEN_SCENARIO = {
             "badge": "🔒 Rapid Mobile Onboarding",
             "benefit": "⏱️ Under 60s Onboarding • Bank-Grade Data Security",
             "component": "merchant/VirtualAuth.html",
-            "narration": "Signing up takes under sixty seconds. Enter your business details, create your password, and verify with an instant six-digit mobile OTP to immediately access your merchant portal.",
+            "narration": "To create your merchant account, tap on the 'Create Account' tab. Enter your full name, primary mobile number, business email, and set a secure password. You can also enter an optional referral code. Tap 'Register & Get OTP' to receive an instant six-digit verification code on your mobile. Once submitted, your business account is verified and ready to configure in under sixty seconds.",
             "actions": [
-                { "type": "spotlight", "selector": "#tab-register", "scale": 1.15, "wait_before": 0.6 },
-                { "type": "tap", "x": 320, "y": 140, "selector": "#tab-register", "wait_before": 0.6 },
-                { "type": "clear_spotlight", "wait_before": 0.4 },
-                { "type": "spotlight", "selector": "#form-register", "scale": 1.04, "wait_before": 0.6 },
-                { "type": "type", "selector": "#reg-name", "text": "Aarav Rajput", "wait_before": 0.4 },
-                { "type": "type", "selector": "#reg-phone", "text": "9876543210", "wait_before": 0.4 },
-                { "type": "type", "selector": "#reg-email", "text": "aarav@servesmile.com", "wait_before": 0.4 },
-                { "type": "type", "selector": "#reg-pw", "text": "SecurePass2026!", "wait_before": 0.4 },
-                { "type": "tap", "x": 215, "y": 530, "selector": "#form-register button[type='submit']", "wait_before": 0.8 },
+                { "type": "spotlight", "selector": "#tab-register", "scale": 1.15, "wait_before": 0.8 },
+                { "type": "tap", "x": 320, "y": 140, "selector": "#tab-register", "wait_before": 0.8 },
                 { "type": "clear_spotlight", "wait_before": 0.5 },
-                { "type": "spotlight", "selector": "#view-otp", "scale": 1.1, "wait_before": 0.6 },
-                { "type": "cursor_move", "x": 215, "y": 380, "wait_before": 1.5 },
-                { "type": "clear_spotlight", "wait_before": 0.8 }
+                { "type": "spotlight", "selector": "#form-register", "scale": 1.04, "wait_before": 0.8 },
+                { "type": "type", "selector": "#reg-name", "text": "Aarav Rajput", "wait_before": 0.6 },
+                { "type": "type", "selector": "#reg-phone", "text": "9876543210", "wait_before": 0.6 },
+                { "type": "type", "selector": "#reg-email", "text": "aarav@servesmile.com", "wait_before": 0.6 },
+                { "type": "type", "selector": "#reg-pw", "text": "SecurePass2026!", "wait_before": 0.6 },
+                { "type": "tap", "x": 215, "y": 530, "selector": "#form-register button[type='submit']", "wait_before": 1.0 },
+                { "type": "clear_spotlight", "wait_before": 0.6 },
+                { "type": "spotlight", "selector": "#view-otp", "scale": 1.08, "wait_before": 0.8 },
+                { "type": "cursor_move", "x": 215, "y": 380, "wait_before": 2.0 },
+                { "type": "clear_spotlight", "wait_before": 1.0 }
             ]
         },
 
@@ -65,19 +65,19 @@ EXHAUSTIVE_11_SCREEN_SCENARIO = {
             "badge": "📍 1-Tap Geolocation & Setup",
             "benefit": "🎯 Accurate Store Listing • Automated Business Hours",
             "component": "merchant/VirtualStoreWizard.html",
-            "narration": "Set up your retail outlet in five simple steps. Upload your brand logo and cover photos, lock in your exact store location with one-tap GPS geolocation, and configure your standard twenty percent member discount rate.",
+            "narration": "Next, our five-step onboarding wizard guides you through launching your digital storefront. Upload your brand logo and high-resolution cover photo. With a single tap on 'Detect GPS Location', the system automatically pins your exact shop coordinates. Set your opening hours, confirm your standard twenty percent member discount rate, and agree to the partner terms to publish your store.",
             "actions": [
-                { "type": "spotlight", "selector": "#sec-step-1", "scale": 1.05, "wait_before": 0.8 },
-                { "type": "cursor_move", "x": 215, "y": 240, "wait_before": 1.2 },
-                { "type": "clear_spotlight", "wait_before": 0.5 },
-                { "type": "scroll", "dy": 250, "wait_before": 0.6 },
-                { "type": "spotlight", "selector": "#btn-gps", "scale": 1.12, "wait_before": 0.6 },
-                { "type": "tap", "x": 215, "y": 360, "selector": "#btn-gps", "wait_before": 0.8 },
-                { "type": "clear_spotlight", "wait_before": 1.2 },
-                { "type": "scroll", "dy": 380, "wait_before": 0.6 },
-                { "type": "spotlight", "selector": "#btn-launch", "scale": 1.12, "wait_before": 0.6 },
-                { "type": "tap", "x": 215, "y": 520, "selector": "#btn-launch", "wait_before": 1.0 },
-                { "type": "clear_spotlight", "wait_before": 0.8 }
+                { "type": "spotlight", "selector": "#sec-step-1", "scale": 1.05, "wait_before": 1.0 },
+                { "type": "cursor_move", "x": 215, "y": 240, "wait_before": 1.5 },
+                { "type": "clear_spotlight", "wait_before": 0.6 },
+                { "type": "scroll", "dy": 250, "wait_before": 0.8 },
+                { "type": "spotlight", "selector": "#btn-gps", "scale": 1.12, "wait_before": 0.8 },
+                { "type": "tap", "x": 215, "y": 360, "selector": "#btn-gps", "wait_before": 1.0 },
+                { "type": "clear_spotlight", "wait_before": 1.5 },
+                { "type": "scroll", "dy": 380, "wait_before": 0.8 },
+                { "type": "spotlight", "selector": "#btn-launch", "scale": 1.12, "wait_before": 0.8 },
+                { "type": "tap", "x": 215, "y": 520, "selector": "#btn-launch", "wait_before": 1.2 },
+                { "type": "clear_spotlight", "wait_before": 1.0 }
             ]
         },
 
@@ -91,17 +91,17 @@ EXHAUSTIVE_11_SCREEN_SCENARIO = {
             "badge": "🚀 Instant Customer Visibility",
             "benefit": "📈 Guaranteed Foot Traffic • 1.2k+ Active Cardholders",
             "component": "merchant/VirtualPublicShowcase.html",
-            "narration": "Once published, your store is instantly featured on the ServeSmile Cardholder App. Nearby members discover your exclusive twenty percent offer, driving high-intent foot traffic directly to your business.",
+            "narration": "Once published, your storefront is instantly showcased across the ServeSmile Cardholder Network. Over one thousand nearby members can discover your restaurant, view your live open status, check your menu, and see your exclusive twenty percent discount offer—driving high-intent foot traffic straight to your counter.",
             "actions": [
-                { "type": "spotlight", "selector": "#showcase-cover", "scale": 1.05, "wait_before": 0.8 },
-                { "type": "cursor_move", "x": 215, "y": 180, "wait_before": 1.5 },
-                { "type": "clear_spotlight", "wait_before": 0.6 },
-                { "type": "spotlight", "selector": "#showcase-discount-banner", "scale": 1.1, "wait_before": 0.8 },
-                { "type": "cursor_move", "x": 215, "y": 320, "wait_before": 1.8 },
-                { "type": "clear_spotlight", "wait_before": 0.6 },
-                { "type": "spotlight", "selector": "#showcase-metrics", "scale": 1.1, "wait_before": 0.8 },
-                { "type": "cursor_move", "x": 215, "y": 420, "wait_before": 1.8 },
-                { "type": "clear_spotlight", "wait_before": 1.0 }
+                { "type": "spotlight", "selector": "#showcase-cover", "scale": 1.05, "wait_before": 1.0 },
+                { "type": "cursor_move", "x": 215, "y": 180, "wait_before": 2.0 },
+                { "type": "clear_spotlight", "wait_before": 0.8 },
+                { "type": "spotlight", "selector": "#showcase-discount-banner", "scale": 1.1, "wait_before": 1.0 },
+                { "type": "cursor_move", "x": 215, "y": 320, "wait_before": 2.2 },
+                { "type": "clear_spotlight", "wait_before": 0.8 },
+                { "type": "spotlight", "selector": "#showcase-metrics", "scale": 1.1, "wait_before": 1.0 },
+                { "type": "cursor_move", "x": 215, "y": 420, "wait_before": 2.2 },
+                { "type": "clear_spotlight", "wait_before": 1.2 }
             ]
         },
 
@@ -114,17 +114,17 @@ EXHAUSTIVE_11_SCREEN_SCENARIO = {
             "badge": "🏪 Central Outlet Operations",
             "benefit": "📊 Centralized Control • Multi-Branch Ready",
             "component": "merchant/VirtualStoreManage.html",
-            "narration": "Manage all your outlet locations and cashier terminals from a unified dashboard. Check live operating hours, monitor online terminal connectivity, and expand to multiple store branches with ease.",
+            "narration": "From the Stores tab, you have full multi-branch management. Check your live open or closed status, review daily operating hours, and verify connected POS cashier terminals. As your business grows, you can expand to multiple store centers and add new retail branch slots in just a single tap.",
             "actions": [
-                { "type": "spotlight", "selector": "#active-store-card", "scale": 1.06, "wait_before": 0.8 },
-                { "type": "cursor_move", "x": 215, "y": 180, "wait_before": 1.2 },
-                { "type": "clear_spotlight", "wait_before": 0.5 },
-                { "type": "spotlight", "selector": "#store-metrics-grid", "scale": 1.12, "wait_before": 0.8 },
-                { "type": "cursor_move", "x": 215, "y": 310, "wait_before": 1.5 },
-                { "type": "clear_spotlight", "wait_before": 0.5 },
-                { "type": "spotlight", "selector": "#store-slots-banner", "scale": 1.1, "wait_before": 0.8 },
-                { "type": "cursor_move", "x": 215, "y": 440, "wait_before": 1.8 },
-                { "type": "clear_spotlight", "wait_before": 1.0 }
+                { "type": "spotlight", "selector": "#active-store-card", "scale": 1.06, "wait_before": 1.0 },
+                { "type": "cursor_move", "x": 215, "y": 180, "wait_before": 1.8 },
+                { "type": "clear_spotlight", "wait_before": 0.6 },
+                { "type": "spotlight", "selector": "#store-metrics-grid", "scale": 1.12, "wait_before": 1.0 },
+                { "type": "cursor_move", "x": 215, "y": 310, "wait_before": 2.0 },
+                { "type": "clear_spotlight", "wait_before": 0.6 },
+                { "type": "spotlight", "selector": "#store-slots-banner", "scale": 1.1, "wait_before": 1.0 },
+                { "type": "cursor_move", "x": 215, "y": 440, "wait_before": 2.2 },
+                { "type": "clear_spotlight", "wait_before": 1.2 }
             ]
         },
 
@@ -137,15 +137,15 @@ EXHAUSTIVE_11_SCREEN_SCENARIO = {
             "badge": "🛡️ Verified Compliance & Trust",
             "benefit": "⭐ Official Verified Badge • Next-Day Bank Settlement",
             "component": "merchant/VirtualKycHub.html",
-            "narration": "Complete your KYC compliance in minutes. Submitting your GSTIN and business PAN unlocks the official green Verified Merchant Partner badge, establishing immediate trust with visiting cardholders.",
+            "narration": "To unlock automated next-day bank settlements and establish instant customer trust, navigate to the KYC Hub. Submitting your business GSTIN certificate and PAN card triggers our rapid compliance audit, awarding your store the official green Verified Merchant Partner badge.",
             "actions": [
-                { "type": "spotlight", "selector": "#kyc-verified-card", "scale": 1.08, "wait_before": 0.8 },
-                { "type": "cursor_move", "x": 215, "y": 180, "wait_before": 1.5 },
-                { "type": "clear_spotlight", "wait_before": 0.6 },
-                { "type": "scroll", "dy": 200, "wait_before": 0.6 },
-                { "type": "spotlight", "selector": "#kyc-audit-box", "scale": 1.06, "wait_before": 0.8 },
-                { "type": "cursor_move", "x": 215, "y": 320, "wait_before": 1.8 },
-                { "type": "clear_spotlight", "wait_before": 1.0 }
+                { "type": "spotlight", "selector": "#kyc-verified-card", "scale": 1.08, "wait_before": 1.0 },
+                { "type": "cursor_move", "x": 215, "y": 180, "wait_before": 2.0 },
+                { "type": "clear_spotlight", "wait_before": 0.8 },
+                { "type": "scroll", "dy": 200, "wait_before": 0.8 },
+                { "type": "spotlight", "selector": "#kyc-audit-box", "scale": 1.06, "wait_before": 1.0 },
+                { "type": "cursor_move", "x": 215, "y": 320, "wait_before": 2.2 },
+                { "type": "clear_spotlight", "wait_before": 1.2 }
             ]
         },
 
@@ -158,22 +158,22 @@ EXHAUSTIVE_11_SCREEN_SCENARIO = {
             "badge": "📦 1-Click Inventory & Invoicing",
             "benefit": "💡 Automated 5% Tax Calculation • Barcode SKU Tracking",
             "component": "merchant/VirtualInventory.html",
-            "narration": "Manage your product catalog with zero accounting headaches. Add dishes and items with official HSN codes to automatically calculate intra-state CGST and SGST tax splits on every bill.",
+            "narration": "Setting up your digital catalog is completely seamless. Tap 'Add Product' to enter your dish name, selling price, and available inventory count. Open the built-in government HSN tax directory to select SAC code 996331 for restaurant food services, which automatically computes your standard five percent GST tax split between CGST and SGST on every invoice.",
             "actions": [
-                { "type": "spotlight", "selector": "#btn-add-product", "scale": 1.2, "wait_before": 0.8 },
-                { "type": "tap", "x": 370, "y": 38, "selector": "#btn-add-product", "wait_before": 0.8 },
-                { "type": "clear_spotlight", "wait_before": 0.5 },
-                { "type": "spotlight", "selector": "#add-product-modal > div", "scale": 1.04, "wait_before": 0.8 },
-                { "type": "tap", "x": 215, "y": 180, "selector": "#inp-new-name", "wait_before": 0.6 },
-                { "type": "type", "selector": "#inp-new-name", "text": "Signature Handi Paneer", "wait_before": 0.5 },
-                { "type": "tap", "x": 320, "y": 360, "selector": "#add-product-modal button:has-text('Browse Directory')", "wait_before": 0.8 },
-                { "type": "clear_spotlight", "wait_before": 0.5 },
-                { "type": "spotlight", "selector": "#hsn-directory-modal > div", "scale": 1.08, "wait_before": 0.8 },
-                { "type": "tap", "x": 215, "y": 280, "selector": "#hsn-results-list > div:first-child", "wait_before": 1.2 },
-                { "type": "clear_spotlight", "wait_before": 0.5 },
-                { "type": "spotlight", "selector": "#add-product-modal button:has-text('Save to Catalog')", "scale": 1.12, "wait_before": 0.8 },
-                { "type": "tap", "x": 215, "y": 510, "selector": "#add-product-modal button:has-text('Save to Catalog')", "wait_before": 0.8 },
-                { "type": "clear_spotlight", "wait_before": 1.0 }
+                { "type": "spotlight", "selector": "#btn-add-product", "scale": 1.2, "wait_before": 1.0 },
+                { "type": "tap", "x": 370, "y": 38, "selector": "#btn-add-product", "wait_before": 1.0 },
+                { "type": "clear_spotlight", "wait_before": 0.6 },
+                { "type": "spotlight", "selector": "#add-product-modal > div", "scale": 1.04, "wait_before": 1.0 },
+                { "type": "tap", "x": 215, "y": 180, "selector": "#inp-new-name", "wait_before": 0.8 },
+                { "type": "type", "selector": "#inp-new-name", "text": "Signature Handi Paneer", "wait_before": 0.6 },
+                { "type": "tap", "x": 320, "y": 360, "selector": "#add-product-modal button:has-text('Browse Directory')", "wait_before": 1.0 },
+                { "type": "clear_spotlight", "wait_before": 0.6 },
+                { "type": "spotlight", "selector": "#hsn-directory-modal > div", "scale": 1.08, "wait_before": 1.0 },
+                { "type": "tap", "x": 215, "y": 280, "selector": "#hsn-results-list > div:first-child", "wait_before": 1.5 },
+                { "type": "clear_spotlight", "wait_before": 0.6 },
+                { "type": "spotlight", "selector": "#add-product-modal button:has-text('Save to Catalog')", "scale": 1.12, "wait_before": 1.0 },
+                { "type": "tap", "x": 215, "y": 510, "selector": "#add-product-modal button:has-text('Save to Catalog')", "wait_before": 1.0 },
+                { "type": "clear_spotlight", "wait_before": 1.2 }
             ]
         },
 
@@ -186,29 +186,29 @@ EXHAUSTIVE_11_SCREEN_SCENARIO = {
             "badge": "⚡ 0ms Offline POS & Thermal Bills",
             "benefit": "🚀 0ms Zero-Latency Billing • Direct Plain-Text QR Bills",
             "component": "merchant/VirtualPosRegister.html",
-            "narration": "The touch POS register operates with zero latency, even completely offline. Tap dishes into the cart, adjust quantity steppers, and park rush-hour orders. When a member presents their pass, scan their QR code to instantly apply the twenty percent discount, generate paperless thermal QR receipts, and review past order invoices on demand.",
+            "narration": "The touch POS terminal operates with zero latency, even completely offline. Browse menu categories and tap dishes into the active cart, or adjust quantities using the in-card steppers. If a line forms, tap 'Hold' to park the order. When a ServeSmile cardholder presents their pass, tap 'Scan Pass' to instantly verify their identity and apply their twenty percent savings. Choose between Cash, Dynamic UPI QR, or Card, and tap 'Complete & Bill' to generate an itemized thermal receipt with a direct plain-text QR bill. You can also open 'Past Bills' at any time to review your complete transaction history.",
             "actions": [
-                { "type": "spotlight", "selector": "#category-chips", "scale": 1.1, "wait_before": 0.8 },
-                { "type": "tap", "x": 140, "y": 140, "selector": ".cat-chip:nth-child(2)", "wait_before": 0.8 },
-                { "type": "clear_spotlight", "wait_before": 0.5 },
-                { "type": "call_js", "code": "window.posTwin.addItem('dish-1');", "wait_before": 0.5 },
-                { "type": "call_js", "code": "window.posTwin.stepQuantity('dish-1', 1);", "wait_before": 0.5 },
-                { "type": "call_js", "code": "window.posTwin.addItem('dish-2');", "wait_before": 0.5 },
-                { "type": "call_js", "code": "window.posTwin.addItem('dish-3');", "wait_before": 0.5 },
-                { "type": "spotlight", "selector": "#btn-member-scan", "scale": 1.15, "wait_before": 0.8 },
-                { "type": "call_js", "code": "window.posTwin.verifyMember('Aarav Rajput', '@aarav_alqasr');", "wait_before": 1.2 },
+                { "type": "spotlight", "selector": "#category-chips", "scale": 1.1, "wait_before": 1.0 },
+                { "type": "tap", "x": 140, "y": 140, "selector": ".cat-chip:nth-child(2)", "wait_before": 1.0 },
                 { "type": "clear_spotlight", "wait_before": 0.6 },
-                { "type": "spotlight", "selector": "#btn-checkout", "scale": 1.12, "wait_before": 0.8 },
-                { "type": "call_js", "code": "window.posTwin.checkout();", "wait_before": 1.2 },
-                { "type": "clear_spotlight", "wait_before": 0.6 },
-                { "type": "spotlight", "selector": "#receipt-modal > div", "scale": 1.06, "wait_before": 0.8 },
-                { "type": "call_js", "code": "window.posTwin.toggleThermalQr();", "wait_before": 1.2 },
+                { "type": "call_js", "code": "window.posTwin.addItem('dish-1');", "wait_before": 0.6 },
+                { "type": "call_js", "code": "window.posTwin.stepQuantity('dish-1', 1);", "wait_before": 0.6 },
+                { "type": "call_js", "code": "window.posTwin.addItem('dish-2');", "wait_before": 0.6 },
+                { "type": "call_js", "code": "window.posTwin.addItem('dish-3');", "wait_before": 0.6 },
+                { "type": "spotlight", "selector": "#btn-member-scan", "scale": 1.15, "wait_before": 1.0 },
+                { "type": "call_js", "code": "window.posTwin.verifyMember('Aarav Rajput', '@aarav_alqasr');", "wait_before": 1.5 },
                 { "type": "clear_spotlight", "wait_before": 0.8 },
-                { "type": "call_js", "code": "window.posTwin.closeReceipt();", "wait_before": 0.6 },
-                { "type": "spotlight", "selector": "#btn-past-bills", "scale": 1.2, "wait_before": 0.8 },
-                { "type": "call_js", "code": "window.posTwin.openPastBills();", "wait_before": 1.0 },
-                { "type": "cursor_move", "x": 215, "y": 300, "wait_before": 2.0 },
-                { "type": "clear_spotlight", "wait_before": 0.8 }
+                { "type": "spotlight", "selector": "#btn-checkout", "scale": 1.12, "wait_before": 1.0 },
+                { "type": "call_js", "code": "window.posTwin.checkout();", "wait_before": 1.5 },
+                { "type": "clear_spotlight", "wait_before": 0.8 },
+                { "type": "spotlight", "selector": "#receipt-modal > div", "scale": 1.06, "wait_before": 1.0 },
+                { "type": "call_js", "code": "window.posTwin.toggleThermalQr();", "wait_before": 1.5 },
+                { "type": "clear_spotlight", "wait_before": 1.0 },
+                { "type": "call_js", "code": "window.posTwin.closeReceipt();", "wait_before": 0.8 },
+                { "type": "spotlight", "selector": "#btn-past-bills", "scale": 1.2, "wait_before": 1.0 },
+                { "type": "call_js", "code": "window.posTwin.openPastBills();", "wait_before": 1.2 },
+                { "type": "cursor_move", "x": 215, "y": 300, "wait_before": 2.5 },
+                { "type": "clear_spotlight", "wait_before": 1.2 }
             ]
         },
 
@@ -221,14 +221,14 @@ EXHAUSTIVE_11_SCREEN_SCENARIO = {
             "badge": "⭐ Verified Reviews & Retention",
             "benefit": "🔁 3.4x Higher Repeat Visits • Direct Customer Messaging",
             "component": "merchant/VirtualCustomerCrm.html",
-            "narration": "Turn first-time diners into loyal regular customers. Review verified cardholder ratings, track weekly member visit frequency, and reply directly to customer inquiries to maximize repeat visits.",
+            "narration": "Retain more diners with our built-in Customer CRM. Track your overall customer satisfaction rating and read verified feedback from actual cardholders. Monitor weekly member check-in frequency and reply directly to customer reviews and inquiries to turn first-time guests into lifelong regulars.",
             "actions": [
-                { "type": "spotlight", "selector": "#crm-rating-summary", "scale": 1.08, "wait_before": 0.8 },
-                { "type": "cursor_move", "x": 215, "y": 140, "wait_before": 1.5 },
-                { "type": "clear_spotlight", "wait_before": 0.6 },
-                { "type": "spotlight", "selector": "#review-card-1", "scale": 1.06, "wait_before": 0.8 },
-                { "type": "cursor_move", "x": 215, "y": 280, "wait_before": 2.0 },
-                { "type": "clear_spotlight", "wait_before": 0.8 }
+                { "type": "spotlight", "selector": "#crm-rating-summary", "scale": 1.08, "wait_before": 1.0 },
+                { "type": "cursor_move", "x": 215, "y": 140, "wait_before": 2.0 },
+                { "type": "clear_spotlight", "wait_before": 0.8 },
+                { "type": "spotlight", "selector": "#review-card-1", "scale": 1.06, "wait_before": 1.0 },
+                { "type": "cursor_move", "x": 215, "y": 280, "wait_before": 2.5 },
+                { "type": "clear_spotlight", "wait_before": 1.2 }
             ]
         },
 
@@ -241,15 +241,15 @@ EXHAUSTIVE_11_SCREEN_SCENARIO = {
             "badge": "💎 Business Boost Scaling Plans",
             "benefit": "🎥 Studio 4K Video Reels • Top Priority Search Placement",
             "component": "merchant/VirtualSubscriptions.html",
-            "narration": "Accelerate your growth with Business Boost subscription tiers. Upgrade to unlock multi-branch management, professional 4K promotional video reels, managed social media advertising, and top priority search ranking across the network.",
+            "narration": "Ready to scale your foot traffic even further? Explore our Business Boost subscription plans. Upgrading to Pro Silver or Elite Gold unlocks multi-branch management, professional 4K promotional video reels produced for your brand, managed social media advertising, and top priority search ranking across the customer app.",
             "actions": [
-                { "type": "spotlight", "selector": "#active-tier-card", "scale": 1.06, "wait_before": 0.8 },
-                { "type": "cursor_move", "x": 215, "y": 180, "wait_before": 1.5 },
-                { "type": "clear_spotlight", "wait_before": 0.6 },
-                { "type": "scroll", "dy": 250, "wait_before": 0.6 },
-                { "type": "spotlight", "selector": "#tier-pro-card", "scale": 1.08, "wait_before": 0.8 },
-                { "type": "cursor_move", "x": 215, "y": 360, "wait_before": 2.2 },
-                { "type": "clear_spotlight", "wait_before": 1.0 }
+                { "type": "spotlight", "selector": "#active-tier-card", "scale": 1.06, "wait_before": 1.0 },
+                { "type": "cursor_move", "x": 215, "y": 180, "wait_before": 2.0 },
+                { "type": "clear_spotlight", "wait_before": 0.8 },
+                { "type": "scroll", "dy": 250, "wait_before": 0.8 },
+                { "type": "spotlight", "selector": "#tier-pro-card", "scale": 1.08, "wait_before": 1.0 },
+                { "type": "cursor_move", "x": 215, "y": 360, "wait_before": 2.5 },
+                { "type": "clear_spotlight", "wait_before": 1.2 }
             ]
         },
 
@@ -262,14 +262,14 @@ EXHAUSTIVE_11_SCREEN_SCENARIO = {
             "badge": "🎧 24/7 Dedicated Merchant Support",
             "benefit": "💬 <2 Min WhatsApp Response • Dedicated Account Manager",
             "component": "merchant/VirtualHelpCenter.html",
-            "narration": "Enjoy peace of mind with 24/7 merchant support. Connect directly with your dedicated account manager via our WhatsApp hotline, submit categorized technical tickets, or follow instant guides for thermal printer setup.",
+            "narration": "Whenever you need assistance, priority merchant support is always available. Connect directly with your dedicated account manager via our priority WhatsApp hotline with response times under two minutes, submit categorized technical tickets, or follow instant troubleshooting guides for Bluetooth thermal receipt printers.",
             "actions": [
-                { "type": "spotlight", "selector": "#help-hotline-card", "scale": 1.08, "wait_before": 0.8 },
-                { "type": "cursor_move", "x": 215, "y": 180, "wait_before": 1.8 },
-                { "type": "clear_spotlight", "wait_before": 0.6 },
-                { "type": "spotlight", "selector": "#help-ticket-card", "scale": 1.06, "wait_before": 0.8 },
-                { "type": "cursor_move", "x": 215, "y": 380, "wait_before": 2.0 },
-                { "type": "clear_spotlight", "wait_before": 1.0 }
+                { "type": "spotlight", "selector": "#help-hotline-card", "scale": 1.08, "wait_before": 1.0 },
+                { "type": "cursor_move", "x": 215, "y": 180, "wait_before": 2.2 },
+                { "type": "clear_spotlight", "wait_before": 0.8 },
+                { "type": "spotlight", "selector": "#help-ticket-card", "scale": 1.06, "wait_before": 1.0 },
+                { "type": "cursor_move", "x": 215, "y": 380, "wait_before": 2.5 },
+                { "type": "clear_spotlight", "wait_before": 1.2 }
             ]
         }
     ]
