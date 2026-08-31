@@ -13,6 +13,7 @@ EXHAUSTIVE_11_SCREEN_SCENARIO = {
         {
             "id": "01_language_select",
             "step": 1,
+            "layout": "split_right",
             "title": "Multi-Language Accessibility",
             "subtitle": "Instant dialect switching for seamless cashier and manager workflows",
             "badge": "🌐 Regional Language Switcher",
@@ -33,6 +34,7 @@ EXHAUSTIVE_11_SCREEN_SCENARIO = {
         {
             "id": "02_registration_form",
             "step": 2,
+            "layout": "split_left",
             "title": "60-Second Merchant Signup",
             "subtitle": "Fast partner registration with instant dual-channel mobile OTP",
             "badge": "🔒 Rapid Mobile Onboarding",
@@ -60,6 +62,7 @@ EXHAUSTIVE_11_SCREEN_SCENARIO = {
         {
             "id": "03_business_onboarding_wizard",
             "step": 3,
+            "layout": "split_right",
             "title": "5-Step Storefront Setup & GPS",
             "subtitle": "Upload brand media & auto-detect coordinates in a single tap",
             "badge": "📍 1-Tap Geolocation & Setup",
@@ -85,11 +88,17 @@ EXHAUSTIVE_11_SCREEN_SCENARIO = {
         {
             "id": "04_public_discovery_showcase",
             "step": 4,
-            "layout": "center",
+            "layout": "center_hero",
             "title": "Live On ServeSmile Discovery",
             "subtitle": "High-visibility discovery driving local foot traffic to your counter",
             "badge": "🚀 Instant Customer Visibility",
             "benefit": "📈 Guaranteed Foot Traffic • 1.2k+ Active Cardholders",
+            "hero_stats": {
+                "left_tag": "PUBLIC DISCOVERY PLATFORM",
+                "left_title": "Live On ServeSmile App",
+                "right_tag": "FOOT TRAFFIC & CUSTOMERS",
+                "right_title": "1.2k+ Active Members"
+            },
             "component": "merchant/VirtualPublicShowcase.html",
             "narration": "Once published, your storefront is instantly showcased across the ServeSmile Cardholder Network. Over one thousand nearby members can discover your restaurant, view your live open status, check your menu, and see your exclusive twenty percent discount offer—driving high-intent foot traffic straight to your counter.",
             "actions": [
@@ -109,10 +118,17 @@ EXHAUSTIVE_11_SCREEN_SCENARIO = {
         {
             "id": "05_managing_store",
             "step": 5,
+            "layout": "deck_stack",
             "title": "Multi-Branch Store Management",
             "subtitle": "Monitor daily hours, online POS status & expand to new outlets",
             "badge": "🏪 Central Outlet Operations",
             "benefit": "📊 Centralized Control • Multi-Branch Ready",
+            "hero_stats": {
+                "left_tag": "MULTI-BRANCH EXPANSION",
+                "left_title": "Central Outlet Control",
+                "right_tag": "0MS POS TERMINALS",
+                "right_title": "Real-Time Cloud Sync"
+            },
             "component": "merchant/VirtualStoreManage.html",
             "narration": "From the Stores tab, you have full multi-branch management. Check your live open or closed status, review daily operating hours, and verify connected POS cashier terminals. As your business grows, you can expand to multiple store centers and add new retail branch slots in just a single tap.",
             "actions": [
@@ -132,6 +148,7 @@ EXHAUSTIVE_11_SCREEN_SCENARIO = {
         {
             "id": "06_updating_kyc",
             "step": 6,
+            "layout": "split_left",
             "title": "Verified Merchant Partner Badge",
             "subtitle": "Automated GSTIN and PAN audit unlocking official trust badge",
             "badge": "🛡️ Verified Compliance & Trust",
@@ -153,6 +170,7 @@ EXHAUSTIVE_11_SCREEN_SCENARIO = {
         {
             "id": "07_catalog_inventory",
             "step": 7,
+            "layout": "split_right",
             "title": "Smart Catalog & Automated GST",
             "subtitle": "Track live stock & auto-calculate CGST and SGST with HSN codes",
             "badge": "📦 1-Click Inventory & Invoicing",
@@ -181,6 +199,7 @@ EXHAUSTIVE_11_SCREEN_SCENARIO = {
         {
             "id": "08_pos_billing_card_past_bills",
             "step": 8,
+            "layout": "split_left",
             "title": "0ms Touch POS, Member QR & Past Bills",
             "subtitle": "Lightning-fast tap billing, 20% member QR scan & thermal receipts",
             "badge": "⚡ 0ms Offline POS & Thermal Bills",
@@ -216,6 +235,7 @@ EXHAUSTIVE_11_SCREEN_SCENARIO = {
         {
             "id": "09_customer_crm_reviews_enquiries",
             "step": 9,
+            "layout": "split_right",
             "title": "Customer CRM & 5-Star Reviews",
             "subtitle": "Track member check-ins & reply directly to verified customer ratings",
             "badge": "⭐ Verified Reviews & Retention",
@@ -236,10 +256,17 @@ EXHAUSTIVE_11_SCREEN_SCENARIO = {
         {
             "id": "10_business_boost_subscriptions",
             "step": 10,
+            "layout": "deck_stack",
             "title": "Business Boost Growth Plans",
             "subtitle": "Unlock multi-branch expansion, promotional reels & top ranking",
             "badge": "💎 Business Boost Scaling Plans",
             "benefit": "🎥 Studio 4K Video Reels • Top Priority Search Placement",
+            "hero_stats": {
+                "left_tag": "PROMO 4K REELS & ADS",
+                "left_title": "Viral Brand Reach",
+                "right_tag": "SEARCH PRIORITY",
+                "right_title": "#1 Cardholder Discovery"
+            },
             "component": "merchant/VirtualSubscriptions.html",
             "narration": "Ready to scale your foot traffic even further? Explore our Business Boost subscription plans. Upgrading to Pro Silver or Elite Gold unlocks multi-branch management, professional 4K promotional video reels produced for your brand, managed social media advertising, and top priority search ranking across the customer app.",
             "actions": [
@@ -257,10 +284,17 @@ EXHAUSTIVE_11_SCREEN_SCENARIO = {
         {
             "id": "11_help_center_support",
             "step": 11,
+            "layout": "center_hero",
             "title": "24/7 Priority Merchant Support",
             "subtitle": "Direct WhatsApp merchant hotline, instant ticketing & printer setup",
             "badge": "🎧 24/7 Dedicated Merchant Support",
             "benefit": "💬 <2 Min WhatsApp Response • Dedicated Account Manager",
+            "hero_stats": {
+                "left_tag": "PRIORITY WHATSAPP LINE",
+                "left_title": "+91 93119 61520",
+                "right_tag": "LIVE RESPONSE TIME",
+                "right_title": "<2 Minute SLA"
+            },
             "component": "merchant/VirtualHelpCenter.html",
             "narration": "Whenever you need assistance, priority merchant support is always available. Connect directly with your dedicated account manager via our priority WhatsApp hotline with response times under two minutes, submit categorized technical tickets, or follow instant troubleshooting guides for Bluetooth thermal receipt printers.",
             "actions": [

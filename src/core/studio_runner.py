@@ -121,13 +121,27 @@ CURSOR_INJECTION_JS = r"""
 })();
 """
 
-def create_gradient_background(w, h):
+def create_gradient_background(w, h, accent_color=(249, 115, 22)):
     bg = np.zeros((h, w, 3), dtype=np.uint8)
-    bg[:, :] = (12, 10, 10)
-    cv2.circle(bg, (260, 240), 500, (18, 42, 90), -1)
-    cv2.circle(bg, (1620, 820), 580, (15, 68, 155), -1)
-    cv2.circle(bg, (960, 540), 320, (12, 28, 55), -1)
-    return cv2.GaussianBlur(bg, (201, 201), 0)
+    bg[:, :] = (10, 10, 14)
+    
+    # Organic Ambient Blooms
+    cv2.circle(bg, (280, 260), 450, (18, 32, 75), -1)
+    cv2.circle(bg, (1640, 800), 550, (12, 55, 140), -1)
+    cv2.circle(bg, (960, 540), 380, (10, 24, 48), -1)
+    
+    blurred = cv2.GaussianBlur(bg, (181, 181), 0)
+    
+    # Sleek Organic Geometric Motion Arcs (Fintech / AfterEffects Style)
+    pil_bg = Image.fromarray(cv2.cvtColor(blurred, cv2.COLOR_BGR2RGB))
+    draw = ImageDraw.Draw(pil_bg, "RGBA")
+    
+    draw.arc([-200, -200, 1100, 1100], start=30, end=140, fill=(249, 115, 22, 28), width=2)
+    draw.arc([-250, -250, 1200, 1200], start=40, end=130, fill=(245, 158, 11, 20), width=1)
+    draw.arc([1000, 200, 2200, 1400], start=200, end=320, fill=(249, 115, 22, 25), width=2)
+    draw.arc([1050, 250, 2250, 1450], start=210, end=310, fill=(52, 211, 153, 18), width=1)
+    
+    return cv2.cvtColor(np.array(pil_bg), cv2.COLOR_RGB2BGR)
 
 def draw_phone_frame(screen_img):
     sw, sh = 430, 932
@@ -352,8 +366,9 @@ class StudioEngine:
             font_narr = font_title
             font_step = font_title
             
-        layout_mode = scene.get("layout", "split")
+        layout_mode = scene.get("layout", "split_right")
         benefit = scene.get("benefit", "⚡ Instant 0ms Checkout • Guaranteed Revenue Growth")
+        metric_badge = scene.get("metric_badge", None)
         
         for frame_idx in range(total_frames):
             t = frame_idx / float(total_frames)
@@ -365,17 +380,44 @@ class StudioEngine:
             
             framed_phone = draw_phone_frame(frame)
             float_offset_y = int(np.sin(t * np.pi * 2) * 5)
+            bounce_badge_y = int(np.sin(t * np.pi * 3) * 4)
             
             canvas = bg_template.copy()
             ph_h, ph_w = framed_phone.shape[:2]
             
-            if layout_mode == "center":
+            if layout_mode == "center" or layout_mode == "center_hero":
                 phone_x = int((WIDTH - ph_w) / 2)
                 cur_y = 56 + float_offset_y
-            else:
-                # Dynamic smooth camera motion (gliding gently during demonstration)
+            elif layout_mode == "split_left":
+                phone_x = int(120 + 20 * np.sin(t * np.pi))
+                cur_y = 56 + float_offset_y
+                text_x = 760
+            elif layout_mode == "deck_stack":
+                phone_x = int((WIDTH - ph_w) / 2)
+                cur_y = 56 + float_offset_y
+                
+                # Floating Ghost Screens in background for 3D Deck Effect
+                left_ghost = cv2.resize(framed_phone, (int(ph_w * 0.82), int(ph_h * 0.82)), interpolation=cv2.INTER_AREA)
+                gh_h, gh_w = left_ghost.shape[:2]
+                
+                # Paste left ghost with 0.45 opacity
+                gx_l, gy_l = 140, 120 + float_offset_y
+                roi_l = canvas[gy_l:gy_l+gh_h, gx_l:gx_l+gh_w]
+                alpha_l = (left_ghost[:, :, 3] / 255.0) * 0.45
+                for c in range(3):
+                    roi_l[:, :, c] = (alpha_l * left_ghost[:, :, c] + (1.0 - alpha_l) * roi_l[:, :, c]).astype(np.uint8)
+                canvas[gy_l:gy_l+gh_h, gx_l:gx_l+gh_w] = roi_l
+                
+                # Paste right ghost with 0.45 opacity
+                gx_r, gy_r = 1280, 120 + float_offset_y
+                roi_r = canvas[gy_r:gy_r+gh_h, gx_r:gx_r+gh_w]
+                for c in range(3):
+                    roi_r[:, :, c] = (alpha_l * left_ghost[:, :, c] + (1.0 - alpha_l) * roi_r[:, :, c]).astype(np.uint8)
+                canvas[gy_r:gy_r+gh_h, gx_r:gx_r+gh_w] = roi_r
+            else: # split_right
                 phone_x = int(1170 - 25 * np.sin(t * np.pi))
                 cur_y = 56 + float_offset_y
+                text_x = 110
             
             roi = canvas[cur_y:cur_y+ph_h, phone_x:phone_x+ph_w]
             alpha = framed_phone[:, :, 3] / 255.0
@@ -386,15 +428,20 @@ class StudioEngine:
             pil_img = Image.fromarray(cv2.cvtColor(canvas, cv2.COLOR_BGR2RGB))
             draw = ImageDraw.Draw(pil_img)
             
-            if layout_mode == "center":
-                # Centered Public Showcase Overlay
+            if layout_mode == "center" or layout_mode == "center_hero" or layout_mode == "deck_stack":
+                # Centered Hero Showcase Overlay with Dynamic Scene-Specific Stats
+                hero_stats = scene.get("hero_stats", {
+                    "left_tag": "PUBLIC DISCOVERY PLATFORM", "left_title": "Live On ServeSmile App",
+                    "right_tag": "FOOT TRAFFIC & CUSTOMERS", "right_title": "1.2k+ Active Members"
+                })
+                
                 draw.rounded_rectangle([140, 120, 580, 240], radius=24, fill=(20, 20, 24, 230), outline=(249, 115, 22, 180), width=2)
-                draw.text((165, 145), "PUBLIC DISCOVERY PLATFORM", font=font_step, fill=(249, 115, 22))
-                draw.text((165, 175), "Live On ServeSmile App", font=font_title, fill=(255, 255, 255))
+                draw.text((165, 145), hero_stats.get("left_tag", "FEATURE HIGHLIGHT"), font=font_step, fill=(249, 115, 22))
+                draw.text((165, 175), hero_stats.get("left_title", "Live Feature"), font=font_title, fill=(255, 255, 255))
                 
                 draw.rounded_rectangle([1340, 120, 1780, 240], radius=24, fill=(20, 20, 24, 230), outline=(16, 185, 129, 180), width=2)
-                draw.text((1365, 145), "FOOT TRAFFIC & CUSTOMERS", font=font_step, fill=(52, 211, 153))
-                draw.text((1365, 175), "1.2k+ Active Members", font=font_title, fill=(255, 255, 255))
+                draw.text((1365, 145), hero_stats.get("right_tag", "KEY PERFORMANCE BENEFIT"), font=font_step, fill=(52, 211, 153))
+                draw.text((1365, 175), hero_stats.get("right_title", "High Impact"), font=font_title, fill=(255, 255, 255))
                 
                 # Bottom Voiceover Card
                 words = narration.split(" ")
@@ -416,60 +463,62 @@ class StudioEngine:
                     draw.text((300, ny), l, font=font_narr, fill=(245, 245, 250))
                     ny += 28
             else:
-                # Standard Split Layout with Left Motion Graphic Storyboard
-                # Step & Badge
-                draw.rounded_rectangle([110, 100, 250, 134], radius=16, fill=(249, 115, 22, 45), outline=(249, 115, 22, 190), width=1)
-                draw.text((128, 108), f"STEP {step_num:02d} / {total_steps:02d}", font=font_step, fill=(255, 180, 90))
+                # Dynamic Split Layout (Left or Right)
+                # Step Indicator
+                draw.rounded_rectangle([text_x, 100, text_x + 140, 134], radius=16, fill=(249, 115, 22, 45), outline=(249, 115, 22, 190), width=1)
+                draw.text((text_x + 18, 108), f"STEP {step_num:02d} / {total_steps:02d}", font=font_step, fill=(255, 180, 90))
                 
-                draw.rounded_rectangle([110, 146, 780, 194], radius=20, fill=(30, 30, 36, 230), outline=(245, 158, 11, 150), width=1)
-                draw.text((130, 158), badge, font=font_badge, fill=(255, 205, 110))
+                # Floating Badge
+                draw.rounded_rectangle([text_x, 146, text_x + 670, 194], radius=20, fill=(30, 30, 36, 230), outline=(245, 158, 11, 150), width=1)
+                draw.text((text_x + 20, 158), badge, font=font_badge, fill=(255, 205, 110))
                 
-                # Title & Subtitle
+                # Two-Tone Kinetic Title
                 title_words = title.split(" ")
-                if len(title) > 28:
-                    t_line1 = " ".join(title_words[:4])
-                    t_line2 = " ".join(title_words[4:])
-                    draw.text((110, 214), t_line1, font=font_title, fill=(255, 255, 255))
-                    draw.text((110, 260), t_line2, font=font_title, fill=(255, 255, 255))
+                if len(title_words) >= 3:
+                    accent_word = " ".join(title_words[:2])
+                    rest_words = " ".join(title_words[2:])
+                    draw.text((text_x, 214), accent_word, font=font_title, fill=(249, 115, 22))
+                    draw.text((text_x, 260), rest_words, font=font_title, fill=(255, 255, 255))
                     sub_y = 316
                 else:
-                    draw.text((110, 214), title, font=font_title, fill=(255, 255, 255))
+                    draw.text((text_x, 214), title, font=font_title, fill=(255, 255, 255))
                     sub_y = 268
                     
-                draw.text((110, sub_y), subtitle, font=font_sub, fill=(200, 200, 210))
+                draw.text((text_x, sub_y), subtitle, font=font_sub, fill=(200, 200, 210))
                 
-                # Key Performance Benefit Pill
-                draw.rounded_rectangle([110, sub_y + 36, 780, sub_y + 82], radius=16, fill=(16, 185, 129, 25), outline=(16, 185, 129, 160), width=1)
-                draw.text((130, sub_y + 48), benefit, font=font_step, fill=(52, 211, 153))
+                # Key Performance Benefit Pill (with subtle harmonic bounce)
+                pill_y = sub_y + 36 + bounce_badge_y
+                draw.rounded_rectangle([text_x, pill_y, text_x + 670, pill_y + 46], radius=16, fill=(16, 185, 129, 25), outline=(16, 185, 129, 160), width=1)
+                draw.text((text_x + 20, pill_y + 12), benefit, font=font_step, fill=(52, 211, 153))
                 
                 # Progress Bar
-                bar_w = 720
-                draw.rounded_rectangle([110, 475, 110 + bar_w, 483], radius=4, fill=(45, 45, 52))
+                bar_w = 670
+                draw.rounded_rectangle([text_x, 475, text_x + bar_w, 483], radius=4, fill=(45, 45, 52))
                 fill_w = int(bar_w * t)
                 if fill_w > 4:
-                    draw.rounded_rectangle([110, 475, 110 + fill_w, 483], radius=4, fill=(249, 115, 22))
+                    draw.rounded_rectangle([text_x, 475, text_x + fill_w, 483], radius=4, fill=(249, 115, 22))
                     
-                # Voiceover Card
+                # Voiceover Action Card
                 words = narration.split(" ")
                 lines, cur = [], []
                 for w in words:
                     cur.append(w)
-                    if len(" ".join(cur)) > 52:
+                    if len(" ".join(cur)) > 48:
                         lines.append(" ".join(cur))
                         cur = []
                 if cur: lines.append(" ".join(cur))
                 
                 card_h = 75 + len(lines) * 28
                 card_top = 940 - card_h
-                draw.rounded_rectangle([110, card_top, 980, 940], radius=24, fill=(20, 20, 24, 235), outline=(55, 55, 65, 220), width=1)
-                draw.text((140, card_top + 20), "STEP-BY-STEP ACTION GUIDE", font=font_step, fill=(249, 115, 22))
+                draw.rounded_rectangle([text_x, card_top, text_x + 670, 940], radius=24, fill=(20, 20, 24, 235), outline=(55, 55, 65, 220), width=1)
+                draw.text((text_x + 30, card_top + 20), "STEP-BY-STEP ACTION GUIDE", font=font_step, fill=(249, 115, 22))
                 
                 ny = card_top + 50
                 for l in lines:
-                    draw.text((140, ny), l, font=font_narr, fill=(240, 240, 245))
+                    draw.text((text_x + 30, ny), l, font=font_narr, fill=(240, 240, 245))
                     ny += 28
                     
-                draw.text((110, 975), "ServeSmile Merchant OS  •  Empowering Retail & Dining Partners", font=font_sub, fill=(125, 125, 135))
+                draw.text((text_x, 975), "ServeSmile Merchant OS  •  Empowering Retail & Dining Partners", font=font_sub, fill=(125, 125, 135))
                 
             frame_bgr = cv2.cvtColor(np.array(pil_img), cv2.COLOR_RGB2BGR)
             out_writer.write(frame_bgr)
