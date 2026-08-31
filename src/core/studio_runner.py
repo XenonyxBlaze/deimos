@@ -58,9 +58,8 @@ CURSOR_INJECTION_JS = r"""
   };
 
   let activeSpotlightEl = null;
-  let backdropEl = null;
 
-  window.spotlight = (selector, scale = 1.15) => {
+  window.spotlight = (selector, scale = 1.08) => {
     window.clearSpotlight();
     let el = null;
     try {
@@ -76,20 +75,6 @@ CURSOR_INJECTION_JS = r"""
     }
     if (!el) return;
 
-    backdropEl = document.createElement('div');
-    backdropEl.id = 'studio-spotlight-backdrop';
-    backdropEl.style.position = 'fixed';
-    backdropEl.style.inset = '0';
-    backdropEl.style.backgroundColor = 'rgba(0, 0, 0, 0.35)';
-    backdropEl.style.backdropFilter = 'blur(2px)';
-    backdropEl.style.zIndex = '999990';
-    backdropEl.style.opacity = '0';
-    backdropEl.style.transition = 'opacity 0.35s ease';
-    backdropEl.style.pointerEvents = 'none';
-    document.body.appendChild(backdropEl);
-
-    setTimeout(() => { if (backdropEl) backdropEl.style.opacity = '1'; }, 10);
-
     activeSpotlightEl = el;
     el.setAttribute('data-orig-z', el.style.zIndex || '');
     el.setAttribute('data-orig-transform', el.style.transform || '');
@@ -98,18 +83,12 @@ CURSOR_INJECTION_JS = r"""
 
     el.style.position = (getComputedStyle(el).position === 'static') ? 'relative' : el.style.position;
     el.style.zIndex = '999995';
-    el.style.transition = 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease';
+    el.style.transition = 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease';
     el.style.transform = `scale(${scale})`;
-    el.style.boxShadow = '0 0 35px rgba(249, 115, 22, 0.8), 0 0 0 2px rgba(249, 115, 22, 0.95)';
+    el.style.boxShadow = '0 0 0 3px rgba(249, 115, 22, 1), 0 10px 30px rgba(249, 115, 22, 0.45)';
   };
 
   window.clearSpotlight = () => {
-    if (backdropEl) {
-      backdropEl.style.opacity = '0';
-      const b = backdropEl;
-      setTimeout(() => { if (b && b.parentNode) b.parentNode.removeChild(b); }, 350);
-      backdropEl = null;
-    }
     if (activeSpotlightEl) {
       activeSpotlightEl.style.transform = activeSpotlightEl.getAttribute('data-orig-transform') || '';
       activeSpotlightEl.style.boxShadow = activeSpotlightEl.getAttribute('data-orig-shadow') || '';
@@ -194,13 +173,14 @@ class StudioEngine:
             try:
                 communicate = edge_tts.Communicate(text, self.voice, rate="-7%", pitch="+0Hz")
                 await communicate.save(mp3_path)
-                success = True
-                break
+                if os.path.exists(mp3_path) and os.path.getsize(mp3_path) > 1000:
+                    success = True
+                    break
             except Exception as e:
                 print(f"[TTS] Attempt {attempt+1} encountered network glitch: {e}. Retrying in 2s...")
                 await asyncio.sleep(2.0)
                 
-        if not success and not os.path.exists(mp3_path):
+        if not success or not os.path.exists(mp3_path) or os.path.getsize(mp3_path) < 1000:
             raise RuntimeError(f"Failed to synthesize voiceover for {scene_id} after 5 attempts")
         
         subprocess.run([
@@ -379,29 +359,25 @@ class StudioEngine:
             else: frame = last_frame
             
             framed_phone = draw_phone_frame(frame)
-            float_offset_y = int(np.sin(t * np.pi * 2) * 5)
-            bounce_badge_y = int(np.sin(t * np.pi * 3) * 4)
+            cur_y = 56 # Rock-solid fixed vertical position (zero micro-wobble)
             
             canvas = bg_template.copy()
             ph_h, ph_w = framed_phone.shape[:2]
             
             if layout_mode == "center" or layout_mode == "center_hero":
                 phone_x = int((WIDTH - ph_w) / 2)
-                cur_y = 56 + float_offset_y
             elif layout_mode == "split_left":
-                phone_x = int(120 + 20 * np.sin(t * np.pi))
-                cur_y = 56 + float_offset_y
+                phone_x = 120 # Firm, fixed left alignment
                 text_x = 760
             elif layout_mode == "deck_stack":
-                phone_x = int((WIDTH - ph_w) / 2)
-                cur_y = 56 + float_offset_y
+                phone_x = int((WIDTH - ph_w) / 2) # Firm, fixed center alignment
                 
-                # Floating Ghost Screens in background for 3D Deck Effect
+                # Floating Ghost Screens in background for 3D Deck Effect (Fixed positions)
                 left_ghost = cv2.resize(framed_phone, (int(ph_w * 0.82), int(ph_h * 0.82)), interpolation=cv2.INTER_AREA)
                 gh_h, gh_w = left_ghost.shape[:2]
                 
                 # Paste left ghost with 0.45 opacity
-                gx_l, gy_l = 140, 120 + float_offset_y
+                gx_l, gy_l = 140, 120
                 roi_l = canvas[gy_l:gy_l+gh_h, gx_l:gx_l+gh_w]
                 alpha_l = (left_ghost[:, :, 3] / 255.0) * 0.45
                 for c in range(3):
@@ -409,14 +385,13 @@ class StudioEngine:
                 canvas[gy_l:gy_l+gh_h, gx_l:gx_l+gh_w] = roi_l
                 
                 # Paste right ghost with 0.45 opacity
-                gx_r, gy_r = 1280, 120 + float_offset_y
+                gx_r, gy_r = 1280, 120
                 roi_r = canvas[gy_r:gy_r+gh_h, gx_r:gx_r+gh_w]
                 for c in range(3):
                     roi_r[:, :, c] = (alpha_l * left_ghost[:, :, c] + (1.0 - alpha_l) * roi_r[:, :, c]).astype(np.uint8)
                 canvas[gy_r:gy_r+gh_h, gx_r:gx_r+gh_w] = roi_r
             else: # split_right
-                phone_x = int(1170 - 25 * np.sin(t * np.pi))
-                cur_y = 56 + float_offset_y
+                phone_x = 1170 # Firm, fixed right alignment
                 text_x = 110
             
             roi = canvas[cur_y:cur_y+ph_h, phone_x:phone_x+ph_w]
@@ -486,8 +461,8 @@ class StudioEngine:
                     
                 draw.text((text_x, sub_y), subtitle, font=font_sub, fill=(200, 200, 210))
                 
-                # Key Performance Benefit Pill (with subtle harmonic bounce)
-                pill_y = sub_y + 36 + bounce_badge_y
+                # Key Performance Benefit Pill
+                pill_y = sub_y + 36
                 draw.rounded_rectangle([text_x, pill_y, text_x + 670, pill_y + 46], radius=16, fill=(16, 185, 129, 25), outline=(16, 185, 129, 160), width=1)
                 draw.text((text_x + 20, pill_y + 12), benefit, font=font_step, fill=(52, 211, 153))
                 

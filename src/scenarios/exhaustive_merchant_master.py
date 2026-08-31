@@ -42,17 +42,15 @@ EXHAUSTIVE_11_SCREEN_SCENARIO = {
             "component": "merchant/VirtualAuth.html",
             "narration": "To create your merchant account, tap on the 'Create Account' tab. Enter your full name, primary mobile number, business email, and set a secure password. You can also enter an optional referral code. Tap 'Register & Get OTP' to receive an instant six-digit verification code on your mobile. Once submitted, your business account is verified and ready to configure in under sixty seconds.",
             "actions": [
-                { "type": "spotlight", "selector": "#tab-register", "scale": 1.15, "wait_before": 0.8 },
                 { "type": "tap", "x": 320, "y": 140, "selector": "#tab-register", "wait_before": 0.8 },
-                { "type": "clear_spotlight", "wait_before": 0.5 },
-                { "type": "spotlight", "selector": "#form-register", "scale": 1.04, "wait_before": 0.8 },
                 { "type": "type", "selector": "#reg-name", "text": "Aarav Rajput", "wait_before": 0.6 },
                 { "type": "type", "selector": "#reg-phone", "text": "9876543210", "wait_before": 0.6 },
                 { "type": "type", "selector": "#reg-email", "text": "aarav@servesmile.com", "wait_before": 0.6 },
                 { "type": "type", "selector": "#reg-pw", "text": "SecurePass2026!", "wait_before": 0.6 },
+                { "type": "spotlight", "selector": "#form-register button[type='submit']", "scale": 1.05, "wait_before": 0.8 },
                 { "type": "tap", "x": 215, "y": 530, "selector": "#form-register button[type='submit']", "wait_before": 1.0 },
                 { "type": "clear_spotlight", "wait_before": 0.6 },
-                { "type": "spotlight", "selector": "#view-otp", "scale": 1.08, "wait_before": 0.8 },
+                { "type": "spotlight", "selector": "#view-otp", "scale": 1.05, "wait_before": 0.8 },
                 { "type": "cursor_move", "x": 215, "y": 380, "wait_before": 2.0 },
                 { "type": "clear_spotlight", "wait_before": 1.0 }
             ]
