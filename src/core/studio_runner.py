@@ -26,7 +26,7 @@ WIDTH = 1920
 HEIGHT = 1080
 FPS = 30
 
-CURSOR_INJECTION_JS = """
+CURSOR_INJECTION_JS = r"""
 (() => {
   if (document.getElementById('studio-cursor')) return;
   const cur = document.createElement('div');
@@ -67,7 +67,7 @@ CURSOR_INJECTION_JS = """
       el = document.querySelector(selector);
     } catch(e) {}
     
-    if (!el && selector.includes(':has-text(')) {
+    if (!el && selector && selector.includes(':has-text(')) {
       const match = selector.match(/:has-text\(['"](.+?)['"]\)/);
       if (match && match[1]) {
         const tag = selector.split(':')[0] || '*';
@@ -175,8 +175,19 @@ class StudioEngine:
         wav_path = os.path.join(ASSETS_DIR, f"{scene_id}.wav")
         mp3_path = os.path.join(ASSETS_DIR, f"{scene_id}.mp3")
         
-        communicate = edge_tts.Communicate(text, self.voice, rate="-7%", pitch="+0Hz")
-        await communicate.save(mp3_path)
+        success = False
+        for attempt in range(5):
+            try:
+                communicate = edge_tts.Communicate(text, self.voice, rate="-7%", pitch="+0Hz")
+                await communicate.save(mp3_path)
+                success = True
+                break
+            except Exception as e:
+                print(f"[TTS] Attempt {attempt+1} encountered network glitch: {e}. Retrying in 2s...")
+                await asyncio.sleep(2.0)
+                
+        if not success and not os.path.exists(mp3_path):
+            raise RuntimeError(f"Failed to synthesize voiceover for {scene_id} after 5 attempts")
         
         subprocess.run([
             FFMPEG_EXE, "-y", "-i", mp3_path,
@@ -227,48 +238,62 @@ class StudioEngine:
                 if act_type == "spotlight":
                     sel = act["selector"]
                     scale = act.get("scale", 1.08)
-                    await page.evaluate(f"window.spotlight('{sel}', {scale});")
+                    await page.evaluate("(args) => window.spotlight(args.sel, args.scale)", {"sel": sel, "scale": scale})
                 elif act_type == "clear_spotlight":
-                    await page.evaluate("window.clearSpotlight();")
+                    await page.evaluate("() => window.clearSpotlight()")
                 elif act_type == "cursor_move":
                     x = act.get("x", 215)
                     y = act.get("y", 466)
-                    await page.evaluate(f"window.moveCursor({x}, {y});")
+                    await page.evaluate("(args) => window.moveCursor(args.x, args.y)", {"x": x, "y": y})
                 elif act_type == "tap":
                     x = act.get("x", 215)
                     y = act.get("y", 466)
                     sel = act.get("selector")
                     if sel:
-                        await page.evaluate(f"""(() => {{
-                            const el = document.querySelector('{sel}');
-                            if (el) {{
+                        await page.evaluate("""(selector) => {
+                            let el = null;
+                            try { el = document.querySelector(selector); } catch(e) {}
+                            if (!el && selector.includes(':has-text(')) {
+                                const match = selector.match(/:has-text\\(['"](.+?)['"]\\)/);
+                                if (match && match[1]) {
+                                    const tag = selector.split(':')[0] || '*';
+                                    el = Array.from(document.querySelectorAll(tag)).find(n => n.textContent.includes(match[1]));
+                                }
+                            }
+                            if (el) {
                                 const rect = el.getBoundingClientRect();
                                 window.moveCursor(rect.left + rect.width/2, rect.top + rect.height/2);
-                            }}
-                        }})();""")
+                            }
+                        }""", sel)
                         await page.wait_for_timeout(300)
                     else:
-                        await page.evaluate(f"window.moveCursor({x}, {y});")
+                        await page.evaluate("(args) => window.moveCursor(args.x, args.y)", {"x": x, "y": y})
                         await page.wait_for_timeout(300)
-                    await page.evaluate(f"window.clickCursor({x}, {y});")
+                    await page.evaluate("(args) => window.clickCursor(args.x, args.y)", {"x": x, "y": y})
                     if sel:
                         try:
-                            await page.click(sel, timeout=1000)
+                            if ":has-text(" in sel:
+                                await page.locator(sel).click(timeout=1500)
+                            else:
+                                await page.click(sel, timeout=1500)
                         except:
                             pass
                 elif act_type == "type":
                     sel = act["selector"]
                     txt = act["text"]
-                    await page.evaluate(f"""(() => {{
-                        const el = document.querySelector('{sel}');
-                        if (el) {{
+                    await page.evaluate("""(selector) => {
+                        const el = document.querySelector(selector);
+                        if (el) {
                             const rect = el.getBoundingClientRect();
                             window.moveCursor(rect.left + rect.width/2, rect.top + rect.height/2);
-                        }}
-                    }})();""")
+                        }
+                    }""", sel)
                     await page.wait_for_timeout(250)
-                    await page.fill(sel, "")
-                    await page.type(sel, txt, delay=75)
+                    try:
+                        await page.fill(sel, "")
+                        await page.type(sel, txt, delay=75)
+                    except:
+                        pass
                 elif act_type == "call_js":
                     js_code = act.get("code", "")
                     if js_code:
