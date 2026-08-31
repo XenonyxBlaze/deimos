@@ -83,6 +83,10 @@
       </div>
 
       <div class="flex items-center gap-1.5">
+        <button id="btn-past-bills" onclick="openPastBillsModal()" class="px-2.5 py-1.5 bg-stone-800 text-stone-200 hover:text-white text-[10px] font-bold rounded-xl border border-white/10 flex items-center gap-1">
+          <i data-lucide="receipt" class="w-3 h-3 text-orange-400"></i>
+          <span>Past Bills</span>
+        </button>
         <button id="btn-held-carts" onclick="openHeldCartsModal()" class="hidden px-2.5 py-1.5 bg-amber-950 text-amber-300 text-[10px] font-bold rounded-xl border border-amber-500/30 flex items-center gap-1">
           <i data-lucide="pause" class="w-3 h-3 text-amber-400"></i>
           <span id="held-count-badge">Parked (1)</span>
@@ -407,6 +411,49 @@
     </div>
   </div>
 
+  <!-- PAST BILLS & RECEIPTS MODAL -->
+  <div id="past-bills-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-3 hidden">
+    <div class="bg-stone-900 border border-white/10 rounded-3xl w-full max-w-sm shadow-2xl p-4 space-y-3 animate-fade-in max-h-[85vh] overflow-y-auto no-scrollbar">
+      <div class="flex items-center justify-between pb-2 border-b border-white/10">
+        <div class="text-xs font-black text-white flex items-center gap-1.5">
+          <i data-lucide="receipt" class="w-4 h-4 text-orange-400"></i>
+          <span>Recent POS Invoices & Bills</span>
+        </div>
+        <button onclick="closePastBillsModal()" class="w-6 h-6 rounded-lg bg-white/10 text-stone-400 hover:text-white flex items-center justify-center">
+          <i data-lucide="x" class="w-3.5 h-3.5"></i>
+        </button>
+      </div>
+
+      <div class="space-y-2" id="past-bills-list">
+        <!-- Bill 1 -->
+        <div class="p-3 bg-stone-950 rounded-2xl border border-white/10 space-y-1.5">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-white font-mono">Invoice #1042</span>
+            <span class="text-[9px] px-2 py-0.2 rounded-full bg-emerald-500/20 text-emerald-400 font-mono font-bold">COMPLETED</span>
+          </div>
+          <div class="text-[9px] text-stone-400">Signature Butter Chicken (2x), Mutton Biryani, Naan</div>
+          <div class="flex items-center justify-between pt-1 border-t border-white/5">
+            <span class="text-[9px] text-amber-400 font-bold">UPI Payment • 20% Member Discount</span>
+            <span class="text-xs font-black text-white font-mono">₹1,711.50</span>
+          </div>
+        </div>
+
+        <!-- Bill 2 -->
+        <div class="p-3 bg-stone-950 rounded-2xl border border-white/10 space-y-1.5">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-white font-mono">Invoice #1041</span>
+            <span class="text-[9px] px-2 py-0.2 rounded-full bg-emerald-500/20 text-emerald-400 font-mono font-bold">COMPLETED</span>
+          </div>
+          <div class="text-[9px] text-stone-400">Signature Butter Chicken (1x)</div>
+          <div class="flex items-center justify-between pt-1 border-t border-white/5">
+            <span class="text-[9px] text-stone-400">Cash Payment</span>
+            <span class="text-xs font-black text-white font-mono">₹504.00</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
     lucide.createIcons();
 
@@ -673,6 +720,14 @@
       renderCart();
     }
 
+    function openPastBillsModal() {
+      document.getElementById('past-bills-modal').classList.remove('hidden');
+    }
+
+    function closePastBillsModal() {
+      document.getElementById('past-bills-modal').classList.add('hidden');
+    }
+
     // Expose Virtual Pos Controller API for Automation
     window.posTwin = {
       addItem: (id) => addToCart(id),
@@ -685,7 +740,9 @@
       setPaymentMode: (mode) => setPaymentMode(mode),
       checkout: () => checkout(),
       toggleThermalQr: () => toggleThermalQr(),
-      closeReceipt: () => closeReceiptModal()
+      closeReceipt: () => closeReceiptModal(),
+      openPastBills: () => openPastBillsModal(),
+      closePastBills: () => closePastBillsModal()
     };
 
     renderCart();

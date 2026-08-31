@@ -80,8 +80,8 @@ CURSOR_INJECTION_JS = """
     backdropEl.id = 'studio-spotlight-backdrop';
     backdropEl.style.position = 'fixed';
     backdropEl.style.inset = '0';
-    backdropEl.style.backgroundColor = 'rgba(0, 0, 0, 0.72)';
-    backdropEl.style.backdropFilter = 'blur(4px)';
+    backdropEl.style.backgroundColor = 'rgba(0, 0, 0, 0.85)';
+    backdropEl.style.backdropFilter = 'blur(8px)';
     backdropEl.style.zIndex = '999990';
     backdropEl.style.opacity = '0';
     backdropEl.style.transition = 'opacity 0.35s ease';
@@ -98,9 +98,9 @@ CURSOR_INJECTION_JS = """
 
     el.style.position = (getComputedStyle(el).position === 'static') ? 'relative' : el.style.position;
     el.style.zIndex = '999995';
-    el.style.transition = 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease';
-    el.style.transform = `scale(${scale})`;
-    el.style.boxShadow = '0 0 45px rgba(249, 115, 22, 0.65), 0 0 0 2px rgba(249, 115, 22, 0.9)';
+    el.style.transition = 'transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease';
+    el.style.transform = `perspective(1000px) scale(${scale})`;
+    el.style.boxShadow = '0 0 55px rgba(249, 115, 22, 0.85), 0 0 0 2.5px rgba(249, 115, 22, 1), 0 25px 50px -10px rgba(0, 0, 0, 0.95)';
   };
 
   window.clearSpotlight = () => {
