@@ -3,203 +3,214 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>ServeSmile Virtual Store Onboarding Wizard</title>
+  <title>ServeSmile Merchant — 5-Step Business Onboarding Wizard</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap');
     * { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
     .font-mono { font-family: 'JetBrains Mono', monospace; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     .active-press:active { transform: scale(0.97); }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fade-in { animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
   </style>
 </head>
 <body class="bg-stone-950 text-stone-100 min-h-screen flex flex-col select-none antialiased">
 
-  <!-- Top App Header -->
-  <header class="sticky top-0 z-40 bg-stone-900/95 backdrop-blur-xl border-b border-white/10 px-4 py-3 flex items-center justify-between shadow-lg">
-    <div class="flex items-center gap-2">
-      <div class="w-8 h-8 rounded-xl bg-orange-500 text-white flex items-center justify-center">
-        <i data-lucide="store" class="w-4 h-4"></i>
+  <!-- Top Wizard Navigation Bar (1:1 with servesmile-merchant stores/new/+page.svelte) -->
+  <header class="sticky top-0 z-40 bg-stone-900/95 backdrop-blur-xl border-b border-white/10 px-4 py-3 shadow-lg">
+    <div class="max-w-md mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-2.5">
+        <button class="w-8 h-8 rounded-xl bg-stone-800 text-stone-300 flex items-center justify-center border border-white/10">
+          <i data-lucide="arrow-left" class="w-4 h-4"></i>
+        </button>
+        <div>
+          <div class="text-xs font-black text-white flex items-center gap-1.5">
+            <span>Business Setup Wizard</span>
+            <span class="text-[9px] px-2 py-0.2 rounded-full bg-orange-500/20 text-orange-400 font-mono font-bold border border-orange-500/30" id="step-badge">Step 1 of 5</span>
+          </div>
+          <div class="text-[9px] text-stone-400 font-medium" id="step-subheading">Store Identity & Branding</div>
+        </div>
       </div>
-      <div>
-        <div class="text-xs font-black text-white">Onboard Store Center</div>
-        <div class="text-[9px] text-stone-400 font-medium">Step <span id="step-num-txt">1</span> of 5 • Profile setup</div>
+      <div class="text-right font-mono text-[9px] text-orange-400 font-bold" id="step-pct">
+        20% COMPLETE
       </div>
     </div>
-    <div class="px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-black font-mono border border-amber-500/30">
-      SLOT: PRO PLAN
+    <!-- Step Progress Bar -->
+    <div class="max-w-md mx-auto mt-2 h-1.5 bg-stone-800 rounded-full overflow-hidden">
+      <div class="h-full bg-gradient-to-r from-orange-500 to-amber-500 transition-all duration-300" id="wizard-progress-bar" style="width: 20%;"></div>
     </div>
   </header>
 
-  <!-- Step Navigation Progress Bar -->
-  <div class="px-4 py-2 bg-stone-900/50 border-b border-white/5 flex gap-1.5 justify-between">
-    <div id="step-bar-1" class="step-indicator flex-1 h-1.5 rounded-full bg-orange-500"></div>
-    <div id="step-bar-2" class="step-indicator flex-1 h-1.5 rounded-full bg-stone-800"></div>
-    <div id="step-bar-3" class="step-indicator flex-1 h-1.5 rounded-full bg-stone-800"></div>
-    <div id="step-bar-4" class="step-indicator flex-1 h-1.5 rounded-full bg-stone-800"></div>
-    <div id="step-bar-5" class="step-indicator flex-1 h-1.5 rounded-full bg-stone-800"></div>
+  <!-- Step Navigation Pills Strip -->
+  <div class="bg-stone-900/60 border-b border-white/5 px-3 py-2 overflow-x-auto no-scrollbar" id="step-pills">
+    <div class="max-w-md mx-auto flex gap-1.5 text-[10px] font-bold whitespace-nowrap">
+      <div class="px-2.5 py-1 rounded-xl bg-orange-500 text-white flex items-center gap-1">
+        <span>1. Branding</span>
+      </div>
+      <div class="px-2.5 py-1 rounded-xl bg-stone-800 text-stone-400 flex items-center gap-1">
+        <span>2. GPS Location</span>
+      </div>
+      <div class="px-2.5 py-1 rounded-xl bg-stone-800 text-stone-400 flex items-center gap-1">
+        <span>3. Member Offer</span>
+      </div>
+      <div class="px-2.5 py-1 rounded-xl bg-stone-800 text-stone-400 flex items-center gap-1">
+        <span>4. Compliance</span>
+      </div>
+      <div class="px-2.5 py-1 rounded-xl bg-stone-800 text-stone-400 flex items-center gap-1">
+        <span>5. Activate</span>
+      </div>
+    </div>
   </div>
 
-  <!-- Wizard Content Sections -->
-  <main class="flex-1 p-4 space-y-4 max-w-md mx-auto w-full pb-20">
+  <!-- Wizard Main Content Pane -->
+  <main class="flex-1 p-4 max-w-md mx-auto w-full space-y-4 pb-24 overflow-y-auto no-scrollbar">
 
-    <!-- STEP 1: BRANDING & IDENTITY -->
-    <section id="sec-step-1" class="space-y-3">
-      <div class="space-y-0.5">
-        <h2 class="text-sm font-black text-white">1. Store Identity & Visual Branding</h2>
-        <p class="text-[10px] text-stone-400">Define your store title, category, and visual media.</p>
+    <!-- STEP 1: IDENTITY & BRANDING -->
+    <div class="bg-stone-900/90 rounded-3xl border border-white/10 p-4 space-y-3 shadow-xl" id="sec-step-1">
+      <div class="text-xs font-black text-white flex items-center gap-2 pb-2 border-b border-white/10">
+        <div class="w-6 h-6 rounded-lg bg-orange-500/20 text-orange-400 flex items-center justify-center font-mono font-black text-xs">1</div>
+        <span>Store Name & Primary Category</span>
       </div>
 
-      <div class="space-y-2.5 bg-stone-900/80 p-3.5 rounded-2xl border border-white/10">
+      <div class="space-y-2.5">
         <div>
-          <label class="block text-[10px] font-bold text-stone-300 mb-1" for="input-store-name">Store Center Name *</label>
-          <input id="input-store-name" type="text" value="Al Qasr Fine Dining & Grill" class="w-full bg-stone-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-medium focus:outline-none focus:border-orange-500">
+          <label class="block text-[10px] font-bold text-stone-300 mb-1">Official Business Name *</label>
+          <input type="text" id="store-name" value="Al Qasr Fine Dining & Grill" class="w-full bg-stone-950 border border-white/10 rounded-xl px-3 py-2 text-xs font-bold text-white focus:outline-none focus:border-orange-500">
         </div>
 
         <div class="grid grid-cols-2 gap-2">
           <div>
-            <label class="block text-[10px] font-bold text-stone-300 mb-1" for="select-cat">Business Category *</label>
-            <select id="select-cat" class="w-full bg-stone-950 border border-white/10 rounded-xl px-2.5 py-2 text-xs text-white font-medium">
-              <option>Restaurant</option>
-              <option>Cafe & Bakery</option>
-              <option>Retail Store</option>
+            <label class="block text-[10px] font-bold text-stone-300 mb-1">Industry Sector</label>
+            <select class="w-full bg-stone-950 border border-white/10 rounded-xl px-2.5 py-2 text-xs text-white">
+              <option selected>Dining & Restaurants</option>
+              <option>Retail & Grocery</option>
+              <option>Health & Wellness</option>
             </select>
           </div>
           <div>
-            <label class="block text-[10px] font-bold text-stone-300 mb-1" for="select-subcat">Subcategory</label>
-            <select id="select-subcat" class="w-full bg-stone-950 border border-white/10 rounded-xl px-2.5 py-2 text-xs text-white font-medium">
-              <option>Fine Dining & Grill</option>
-              <option>Casual Dining</option>
+            <label class="block text-[10px] font-bold text-stone-300 mb-1">Subcategory</label>
+            <select class="w-full bg-stone-950 border border-white/10 rounded-xl px-2.5 py-2 text-xs text-white">
+              <option selected>Fine Dining & Mughlai</option>
+              <option>Casual Bistro</option>
+              <option>Café & Bakery</option>
             </select>
           </div>
         </div>
 
-        <!-- Logo & Cover Card -->
+        <!-- Media Upload Showcase -->
         <div class="grid grid-cols-2 gap-2 pt-1">
-          <div class="p-3 bg-stone-950 rounded-xl border border-dashed border-white/20 text-center space-y-1">
-            <i data-lucide="image" class="w-5 h-5 text-orange-400 mx-auto"></i>
-            <div class="text-[9px] font-bold text-stone-300">Logo (1:1)</div>
-            <div class="text-[8px] text-emerald-400 font-mono">✓ Uploaded</div>
+          <div class="p-3 bg-stone-950 rounded-2xl border border-dashed border-orange-500/40 text-center space-y-1">
+            <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=160&q=80" alt="Logo" class="w-10 h-10 rounded-xl object-cover mx-auto border border-white/10">
+            <div class="text-[9px] font-bold text-emerald-400">Logo Uploaded</div>
           </div>
-          <div class="p-3 bg-stone-950 rounded-xl border border-dashed border-white/20 text-center space-y-1">
-            <i data-lucide="image-plus" class="w-5 h-5 text-amber-400 mx-auto"></i>
-            <div class="text-[9px] font-bold text-stone-300">Cover Banner</div>
-            <div class="text-[8px] text-emerald-400 font-mono">✓ High-Res</div>
+          <div class="p-3 bg-stone-950 rounded-2xl border border-dashed border-orange-500/40 text-center space-y-1">
+            <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=240&q=80" alt="Cover" class="w-14 h-10 rounded-xl object-cover mx-auto border border-white/10">
+            <div class="text-[9px] font-bold text-emerald-400">Cover Banner Set</div>
           </div>
         </div>
       </div>
-    </section>
+    </div>
 
-    <!-- STEP 2: LOCATION & GPS AUTO-FILL -->
-    <section id="sec-step-2" class="space-y-3">
-      <div class="space-y-0.5">
-        <h2 class="text-sm font-black text-white">2. Storefront Geolocation & Address</h2>
-        <p class="text-[10px] text-stone-400">Pinpoint your outlet for local member discovery.</p>
+    <!-- STEP 2: LOCATION & GPS AUTO-DETECTION -->
+    <div class="bg-stone-900/90 rounded-3xl border border-white/10 p-4 space-y-3 shadow-xl" id="sec-step-2">
+      <div class="text-xs font-black text-white flex items-center justify-between pb-2 border-b border-white/10">
+        <div class="flex items-center gap-2">
+          <div class="w-6 h-6 rounded-lg bg-orange-500/20 text-orange-400 flex items-center justify-center font-mono font-black text-xs">2</div>
+          <span>Physical Location & GPS</span>
+        </div>
+        <span class="text-[9px] text-emerald-400 font-mono font-bold">1-TAP READY</span>
       </div>
 
-      <div class="space-y-2.5 bg-stone-900/80 p-3.5 rounded-2xl border border-white/10">
+      <div class="space-y-2.5">
         <div>
-          <label class="block text-[10px] font-bold text-stone-300 mb-1" for="input-address">Address Line 1 *</label>
-          <input id="input-address" type="text" value="Cyber Hub, Sector 24, DLF Phase 2" class="w-full bg-stone-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-medium focus:outline-none focus:border-orange-500">
+          <label class="block text-[10px] font-bold text-stone-300 mb-1">Street Address</label>
+          <input type="text" value="Unit 4, Ground Floor, DLF Cyber Hub" class="w-full bg-stone-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white">
         </div>
 
         <div class="grid grid-cols-2 gap-2">
           <div>
-            <label class="block text-[10px] font-bold text-stone-300 mb-1" for="input-city">City *</label>
-            <input id="input-city" type="text" value="Gurgaon" class="w-full bg-stone-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-medium">
+            <label class="block text-[10px] font-bold text-stone-300 mb-1">City</label>
+            <input type="text" value="Gurgaon" class="w-full bg-stone-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white">
           </div>
           <div>
-            <label class="block text-[10px] font-bold text-stone-300 mb-1" for="input-pincode">Pincode *</label>
-            <input id="input-pincode" type="text" value="122002" class="w-full bg-stone-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-medium font-mono">
+            <label class="block text-[10px] font-bold text-stone-300 mb-1">PIN Code</label>
+            <input type="text" value="122002" class="w-full bg-stone-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-mono">
           </div>
         </div>
 
-        <button id="btn-gps" onclick="autoDetectGps()" class="w-full py-2 bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 active-press">
-          <i data-lucide="crosshair" class="w-3.5 h-3.5 text-emerald-400"></i>
-          <span>Auto-Detect GPS Coordinates (1-Tap)</span>
+        <!-- 1-Tap Geolocation Button -->
+        <button id="btn-gps" onclick="triggerGpsDetection()" class="w-full py-2.5 bg-gradient-to-r from-orange-500/20 to-amber-500/20 hover:bg-orange-500/30 text-orange-400 border border-orange-500/40 rounded-2xl flex items-center justify-center gap-2 text-xs font-bold active-press transition cursor-pointer">
+          <i data-lucide="crosshair" class="w-4 h-4 text-orange-400" id="gps-icon"></i>
+          <span id="gps-text">Auto-Detect Exact GPS Coordinates</span>
         </button>
 
-        <div id="gps-coords-pill" class="p-2 bg-stone-950 rounded-xl border border-white/10 text-center text-[10px] font-mono text-emerald-400 font-bold">
-          📍 Lat: 28.4986° N • Lng: 77.0878° E (Exact Verified)
+        <div class="p-2.5 bg-stone-950 rounded-xl border border-white/5 flex items-center justify-between text-[9px] font-mono text-stone-400">
+          <span>LAT: <b class="text-white">28.4950° N</b></span>
+          <span>LNG: <b class="text-white">77.0890° E</b></span>
+          <span class="text-emerald-400 font-bold">● ACCURATE</span>
         </div>
       </div>
-    </section>
+    </div>
 
-    <!-- STEP 3: DISCOUNT & HOURS -->
-    <section id="sec-step-3" class="space-y-3">
-      <div class="space-y-0.5">
-        <h2 class="text-sm font-black text-white">3. Member Discount Rate & Timings</h2>
-        <p class="text-[10px] text-stone-400">Set your platform offer and shift schedule.</p>
+    <!-- STEP 3: MEMBER SAVINGS & OPERATIONS -->
+    <div class="bg-stone-900/90 rounded-3xl border border-white/10 p-4 space-y-3 shadow-xl" id="sec-step-3">
+      <div class="text-xs font-black text-white flex items-center gap-2 pb-2 border-b border-white/10">
+        <div class="w-6 h-6 rounded-lg bg-orange-500/20 text-orange-400 flex items-center justify-center font-mono font-black text-xs">3</div>
+        <span>Member Savings Rate & Hours</span>
       </div>
 
-      <div class="space-y-2.5 bg-stone-900/80 p-3.5 rounded-2xl border border-white/10">
+      <div class="space-y-2.5">
         <div>
-          <label class="block text-[10px] font-bold text-stone-300 mb-1">Member Discount Rate</label>
-          <div class="grid grid-cols-4 gap-1.5">
-            <button class="py-1.5 rounded-xl text-xs font-black bg-stone-950 border border-white/10 text-stone-400">10%</button>
-            <button class="py-1.5 rounded-xl text-xs font-black bg-stone-950 border border-white/10 text-stone-400">15%</button>
-            <button class="py-1.5 rounded-xl text-xs font-black bg-orange-500 text-white border border-orange-400 shadow-md">20%</button>
-            <button class="py-1.5 rounded-xl text-xs font-black bg-stone-950 border border-white/10 text-stone-400">25%</button>
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-[10px] font-bold text-stone-300 mb-1">Operational Hours Preset</label>
-          <div class="p-2.5 bg-stone-950 rounded-xl border border-white/10 flex items-center justify-between text-xs">
-            <span class="font-bold text-white">All Days • 11:00 AM – 11:00 PM</span>
-            <span class="text-[9px] px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-400 font-mono">Continuous</span>
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-[10px] font-bold text-stone-300 mb-1">Outlet Amenities</label>
-          <div class="flex flex-wrap gap-1.5">
-            <span class="px-2 py-0.5 rounded-lg bg-orange-500/20 border border-orange-500/40 text-orange-300 text-[10px] font-bold">✓ Outdoor Seating</span>
-            <span class="px-2 py-0.5 rounded-lg bg-orange-500/20 border border-orange-500/40 text-orange-300 text-[10px] font-bold">✓ AC Dining</span>
-            <span class="px-2 py-0.5 rounded-lg bg-orange-500/20 border border-orange-500/40 text-orange-300 text-[10px] font-bold">✓ High-Speed Wi-Fi</span>
-            <span class="px-2 py-0.5 rounded-lg bg-orange-500/20 border border-orange-500/40 text-orange-300 text-[10px] font-bold">✓ Cards / UPI</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- STEP 4: CONTACT & DECLARATIONS -->
-    <section id="sec-step-4" class="space-y-3">
-      <div class="space-y-0.5">
-        <h2 class="text-sm font-black text-white">4. Outreach & Business Declarations</h2>
-        <p class="text-[10px] text-stone-400">Social channels and official compliance licenses.</p>
-      </div>
-
-      <div class="space-y-2.5 bg-stone-900/80 p-3.5 rounded-2xl border border-white/10">
-        <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="block text-[10px] font-bold text-stone-300 mb-0.5" for="input-ig">Instagram Handle</label>
-            <input id="input-ig" type="text" value="@alqasr_dining" class="w-full bg-stone-950 border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white font-medium font-mono">
-          </div>
-          <div>
-            <label class="block text-[10px] font-bold text-stone-300 mb-0.5" for="input-wa">WhatsApp Direct</label>
-            <input id="input-wa" type="text" value="+91 9540795054" class="w-full bg-stone-950 border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white font-medium font-mono">
+          <label class="block text-[10px] font-bold text-stone-300 mb-1">Cardholder Discount Rate</label>
+          <div class="grid grid-cols-5 gap-1.5" id="discount-chips">
+            <button class="py-1.5 rounded-xl text-xs font-mono font-bold bg-stone-950 border border-white/10 text-stone-400">10%</button>
+            <button class="py-1.5 rounded-xl text-xs font-mono font-bold bg-stone-950 border border-white/10 text-stone-400">15%</button>
+            <button class="py-1.5 rounded-xl text-xs font-mono font-black bg-orange-500 border border-orange-400 text-white shadow-md">20%</button>
+            <button class="py-1.5 rounded-xl text-xs font-mono font-bold bg-stone-950 border border-white/10 text-stone-400">25%</button>
+            <button class="py-1.5 rounded-xl text-xs font-mono font-bold bg-stone-950 border border-white/10 text-stone-400">30%</button>
           </div>
         </div>
 
         <div class="grid grid-cols-2 gap-2">
           <div>
-            <label class="block text-[10px] font-bold text-stone-300 mb-0.5" for="input-gst">GSTIN No. *</label>
-            <input id="input-gst" type="text" value="07AAAAA0000A1Z5" class="w-full bg-stone-950 border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white font-medium font-mono">
+            <label class="block text-[10px] font-bold text-stone-300 mb-1">Opens At</label>
+            <input type="text" value="11:00 AM" class="w-full bg-stone-950 border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white font-mono">
           </div>
           <div>
-            <label class="block text-[10px] font-bold text-stone-300 mb-0.5" for="input-fssai">FSSAI License *</label>
-            <input id="input-fssai" type="text" value="10019011000123" class="w-full bg-stone-950 border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white font-medium font-mono">
+            <label class="block text-[10px] font-bold text-stone-300 mb-1">Closes At</label>
+            <input type="text" value="11:00 PM" class="w-full bg-stone-950 border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white font-mono">
           </div>
         </div>
       </div>
-    </section>
+    </div>
 
-    <!-- STEP 5: LAUNCH STORE BUTTON -->
-    <div class="pt-2">
-      <button id="btn-launch" class="w-full py-3.5 bg-gradient-to-r from-orange-500 via-amber-500 to-orange-500 hover:from-orange-600 hover:to-amber-600 text-white font-black text-xs uppercase tracking-wider rounded-2xl shadow-xl shadow-orange-500/25 active-press flex items-center justify-center gap-2">
-        <i data-lucide="rocket" class="w-4 h-4"></i>
-        <span>Launch Store Center into ServeSmile Network</span>
+    <!-- STEP 4 & 5: COMPLIANCE & LAUNCH BUTTON -->
+    <div class="bg-stone-900/90 rounded-3xl border border-white/10 p-4 space-y-3 shadow-xl" id="sec-step-4">
+      <div class="text-xs font-black text-white flex items-center gap-2 pb-2 border-b border-white/10">
+        <div class="w-6 h-6 rounded-lg bg-orange-500/20 text-orange-400 flex items-center justify-center font-mono font-black text-xs">4</div>
+        <span>Licenses & Compliance</span>
+      </div>
+
+      <div class="space-y-2">
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[10px] font-bold text-stone-300 mb-0.5">GSTIN Number</label>
+            <input type="text" value="07AABCS1429B1Z8" class="w-full bg-stone-950 border border-white/10 rounded-xl px-2.5 py-1.5 text-xs text-white font-mono">
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold text-stone-300 mb-0.5">FSSAI License</label>
+            <input type="text" value="10019011000552" class="w-full bg-stone-950 border border-white/10 rounded-xl px-2.5 py-1.5 text-xs text-white font-mono">
+          </div>
+        </div>
+      </div>
+
+      <button id="btn-launch" class="w-full py-3.5 bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 text-white font-black text-xs uppercase tracking-wider rounded-2xl shadow-xl shadow-orange-500/25 active-press flex items-center justify-center gap-2 mt-3 cursor-pointer">
+        <i data-lucide="sparkles" class="w-4 h-4"></i>
+        <span>Complete Onboarding & Launch Center</span>
+        <i data-lucide="arrow-right" class="w-4 h-4"></i>
       </button>
     </div>
 
@@ -208,13 +219,17 @@
   <script>
     lucide.createIcons();
 
-    function autoDetectGps() {
-      const btn = document.getElementById('btn-gps');
-      btn.innerHTML = '<span class="animate-spin">⏳</span> Detecting coordinates...';
+    function triggerGpsDetection() {
+      const icon = document.getElementById('gps-icon');
+      const text = document.getElementById('gps-text');
+      icon.classList.add('animate-spin');
+      text.textContent = 'Acquiring high-precision GPS fix...';
       setTimeout(() => {
-        btn.innerHTML = '<i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i> Location Detected';
-        lucide.createIcons();
-      }, 500);
+        icon.classList.remove('animate-spin');
+        text.textContent = 'GPS Locked: 28.4950° N, 77.0890° E';
+        document.getElementById('btn-gps').classList.remove('text-orange-400');
+        document.getElementById('btn-gps').classList.add('text-emerald-400', 'border-emerald-500/50');
+      }, 700);
     }
   </script>
 </body>

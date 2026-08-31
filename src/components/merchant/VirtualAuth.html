@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>ServeSmile Virtual Auth & Registration</title>
+  <title>ServeSmile Merchant — Authentication & Language</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
   <style>
@@ -17,169 +17,281 @@
 </head>
 <body class="bg-stone-950 text-stone-100 min-h-screen flex flex-col justify-center items-center p-4 select-none relative overflow-hidden antialiased">
 
-  <!-- Background Ambient Glow -->
-  <div class="absolute -top-32 -left-32 w-80 h-80 bg-orange-500/15 rounded-full blur-3xl pointer-events-none"></div>
-  <div class="absolute -bottom-32 -right-32 w-80 h-80 bg-amber-500/15 rounded-full blur-3xl pointer-events-none"></div>
+  <!-- Subtle Background Ambient Glows -->
+  <div class="absolute -top-40 -left-40 w-96 h-96 bg-orange-500/10 rounded-full blur-3xl pointer-events-none"></div>
+  <div class="absolute -bottom-40 -right-40 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
-  <!-- Multi-Language Pill Switcher -->
-  <div class="w-full max-w-sm mb-3 flex items-center justify-between px-2">
-    <div class="flex items-center gap-1 text-[11px] text-stone-400 font-bold">
-      <i data-lucide="globe" class="w-3.5 h-3.5 text-orange-400"></i>
-      <span>Language:</span>
+  <!-- Multi-Language Bar -->
+  <div class="w-full max-w-md mb-3 flex items-center justify-between px-2 relative z-10" id="lang-bar">
+    <div class="flex items-center gap-1.5 text-xs text-stone-400 font-bold">
+      <i data-lucide="globe" class="w-4 h-4 text-orange-400"></i>
+      <span>Regional Language:</span>
     </div>
-    <div class="flex gap-1 bg-stone-900/90 border border-white/10 p-1 rounded-xl">
-      <button onclick="setLang('en')" class="lang-btn active px-2.5 py-0.5 rounded-lg text-[10px] font-black bg-orange-500 text-white">EN</button>
-      <button onclick="setLang('hi')" class="lang-btn px-2.5 py-0.5 rounded-lg text-[10px] font-bold text-stone-400 hover:text-white">हिन्दी</button>
-      <button onclick="setLang('pa')" class="lang-btn px-2.5 py-0.5 rounded-lg text-[10px] font-bold text-stone-400 hover:text-white">ਪੰਜਾਬੀ</button>
-      <button onclick="setLang('gu')" class="lang-btn px-2.5 py-0.5 rounded-lg text-[10px] font-bold text-stone-400 hover:text-white">ગુજરાતી</button>
+    <div class="flex gap-1 bg-stone-900/90 border border-white/10 p-1 rounded-2xl shadow-sm">
+      <button onclick="setLang('en')" class="lang-btn active px-3 py-1 rounded-xl text-xs font-black bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-sm">English</button>
+      <button onclick="setLang('hi')" class="lang-btn px-3 py-1 rounded-xl text-xs font-bold text-stone-400 hover:text-white">हिंदी</button>
+      <button onclick="setLang('pa')" class="lang-btn px-3 py-1 rounded-xl text-xs font-bold text-stone-400 hover:text-white">ਪੰਜਾਬੀ</button>
+      <button onclick="setLang('gu')" class="lang-btn px-3 py-1 rounded-xl text-xs font-bold text-stone-400 hover:text-white">ગુજરાતી</button>
     </div>
   </div>
 
-  <!-- Auth Card Container -->
-  <div class="w-full max-w-sm bg-stone-900/90 border border-white/10 p-5 rounded-3xl shadow-2xl space-y-4 relative z-10 backdrop-blur-xl animate-fade-in">
+  <!-- Main Auth Card Container (1:1 with servesmile-merchant auth/+page.svelte) -->
+  <div class="w-full max-w-md bg-stone-900/90 p-6 sm:p-8 rounded-3xl border border-white/10 shadow-2xl space-y-5 animate-fade-in text-white relative z-10 backdrop-blur-2xl">
+    
     <!-- Brand Header -->
-    <div class="text-center space-y-1.5">
-      <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-orange-500 to-amber-500 p-2.5 mx-auto flex items-center justify-center shadow-lg shadow-orange-500/25 ring-4 ring-orange-500/10">
-        <i data-lucide="store" class="w-6 h-6 text-white"></i>
+    <div class="text-center space-y-2">
+      <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-orange-500 to-amber-500 p-3 mx-auto flex items-center justify-center shadow-xl shadow-orange-500/25 ring-4 ring-orange-500/10">
+        <i data-lucide="store" class="w-7 h-7 text-white"></i>
       </div>
       <div>
-        <h1 class="text-lg font-black text-white tracking-tight" id="txt-app-title">ServeSmile Merchant</h1>
-        <p class="text-[10px] text-stone-400 font-medium" id="txt-app-desc">Sign in or register to manage your store POS terminal</p>
+        <h1 class="text-xl font-black text-white tracking-tight" id="txt-app-title">ServeSmile Merchant</h1>
+        <p class="text-[11px] text-stone-400 font-medium mt-0.5" id="txt-app-desc">Sign in to manage cashier POS, scan QR cards & track revenue</p>
       </div>
     </div>
 
-    <!-- Mode Switcher Tabs -->
-    <div class="p-1 bg-stone-950/80 rounded-2xl border border-white/10 flex items-center">
-      <button id="tab-login" onclick="setMode('login')" class="flex-1 py-1.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-xs">
+    <!-- Mode Switcher Tabs (Sign In vs Create Account) -->
+    <div class="p-1 bg-stone-950/70 rounded-2xl border border-white/10 flex items-center">
+      <button id="tab-login" onclick="setMode('login')" class="flex-1 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-md">
         <span>Sign In</span>
       </button>
-      <button id="tab-register" onclick="setMode('register')" class="flex-1 py-1.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 text-stone-400 hover:text-white bg-transparent">
-        <i data-lucide="sparkles" class="w-3 h-3 text-amber-400"></i>
+      <button id="tab-register" onclick="setMode('register')" class="flex-1 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 text-stone-400 hover:text-white bg-transparent">
+        <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-400"></i>
         <span>Create Account</span>
       </button>
     </div>
 
-    <!-- LOGIN FORM -->
-    <form id="form-login" class="space-y-3">
+    <!-- MODE 1: SIGN IN -->
+    <form id="form-login" class="space-y-4" onsubmit="event.preventDefault(); submitAuth();">
       <div>
-        <label class="block text-[11px] font-bold text-stone-300 mb-1" for="login-id">Email or Mobile Number</label>
+        <label class="block text-xs font-bold text-white mb-1.5" for="login-id">
+          Registered Email or Phone
+        </label>
         <div class="relative">
-          <i data-lucide="user" class="w-4 h-4 text-stone-400 absolute left-3 top-3 pointer-events-none"></i>
-          <input id="login-id" type="text" value="" placeholder="e.g. aarav@servesmile.com" class="w-full bg-stone-950 border border-white/10 rounded-2xl pl-9 pr-3 py-2.5 text-xs text-white placeholder-stone-500 focus:outline-none focus:border-orange-500 font-medium">
+          <div class="absolute inset-y-0 left-3.5 flex items-center pointer-events-none text-stone-400">
+            <i data-lucide="user" class="w-4 h-4"></i>
+          </div>
+          <input
+            id="login-id"
+            type="text"
+            placeholder="e.g. 9876543210 or merchant@servesmile.com"
+            class="w-full bg-stone-950/80 border border-white/10 rounded-2xl pl-10 pr-4 py-3 text-xs font-medium text-white placeholder-stone-500 focus:outline-none focus:border-orange-500"
+          />
         </div>
       </div>
 
       <div>
-        <div class="flex justify-between items-center mb-1">
-          <label class="text-[11px] font-bold text-stone-300" for="login-pw">Password</label>
-          <span class="text-[10px] text-orange-400 font-bold hover:underline cursor-pointer">Forgot?</span>
+        <div class="flex items-center justify-between mb-1.5">
+          <label class="text-xs font-bold text-white" for="login-pw">
+            Password
+          </label>
+          <button type="button" class="text-[11px] font-bold text-orange-400 hover:text-orange-300 transition bg-transparent border-none">
+            Forgot Password?
+          </button>
         </div>
         <div class="relative">
-          <i data-lucide="lock" class="w-4 h-4 text-stone-400 absolute left-3 top-3 pointer-events-none"></i>
-          <input id="login-pw" type="password" value="" placeholder="••••••••••••" class="w-full bg-stone-950 border border-white/10 rounded-2xl pl-9 pr-9 py-2.5 text-xs text-white placeholder-stone-500 focus:outline-none focus:border-orange-500 font-medium">
-          <i data-lucide="eye" class="w-4 h-4 text-stone-400 absolute right-3 top-3 cursor-pointer"></i>
+          <div class="absolute inset-y-0 left-3.5 flex items-center pointer-events-none text-stone-400">
+            <i data-lucide="lock" class="w-4 h-4"></i>
+          </div>
+          <input
+            id="login-pw"
+            type="password"
+            placeholder="Enter your account password"
+            class="w-full bg-stone-950/80 border border-white/10 rounded-2xl pl-10 pr-10 py-3 text-xs font-medium text-white placeholder-stone-500 focus:outline-none focus:border-orange-500"
+          />
+          <button type="button" onclick="togglePasswordVisibility('login-pw')" class="absolute inset-y-0 right-3 flex items-center text-stone-400 hover:text-white cursor-pointer border-none bg-transparent">
+            <i data-lucide="eye" class="w-4 h-4" id="eye-icon"></i>
+          </button>
         </div>
       </div>
 
-      <button type="button" onclick="submitAuth()" class="w-full py-3 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black text-xs uppercase tracking-wider rounded-2xl shadow-lg shadow-orange-500/20 active-press flex items-center justify-center gap-1.5 mt-2">
+      <button
+        type="submit"
+        class="w-full py-3.5 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black text-xs uppercase tracking-wider rounded-2xl shadow-xl shadow-orange-500/25 active-press transition cursor-pointer flex items-center justify-center gap-2 mt-2"
+      >
         <span>Sign In to Merchant Portal</span>
         <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
       </button>
     </form>
 
-    <!-- REGISTER FORM -->
-    <form id="form-register" class="space-y-2.5 hidden">
+    <!-- MODE 2: SELF-SERVE REGISTER -->
+    <form id="form-register" class="space-y-3.5 hidden" onsubmit="event.preventDefault(); submitAuth();">
       <div>
-        <label class="block text-[10px] font-bold text-stone-300 mb-0.5" for="reg-name">Merchant Full Name *</label>
-        <div class="relative">
-          <i data-lucide="user" class="w-3.5 h-3.5 text-stone-400 absolute left-3 top-2.5 pointer-events-none"></i>
-          <input id="reg-name" type="text" placeholder="e.g. Aarav Rajput" class="w-full bg-stone-950 border border-white/10 rounded-xl pl-8 pr-3 py-2 text-xs text-white placeholder-stone-500 focus:outline-none focus:border-orange-500 font-medium">
-        </div>
-      </div>
-
-      <div class="grid grid-cols-2 gap-2">
-        <div>
-          <label class="block text-[10px] font-bold text-stone-300 mb-0.5" for="reg-phone">Mobile *</label>
-          <input id="reg-phone" type="tel" placeholder="9540795054" class="w-full bg-stone-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-stone-500 focus:outline-none focus:border-orange-500 font-medium">
-        </div>
-        <div>
-          <label class="block text-[10px] font-bold text-stone-300 mb-0.5" for="reg-email">Email</label>
-          <input id="reg-email" type="email" placeholder="owner@store.com" class="w-full bg-stone-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-stone-500 focus:outline-none focus:border-orange-500 font-medium">
-        </div>
-      </div>
-
-      <div class="grid grid-cols-2 gap-2">
-        <div>
-          <label class="block text-[10px] font-bold text-stone-300 mb-0.5" for="reg-pw">Password *</label>
-          <input id="reg-pw" type="password" placeholder="••••••••" class="w-full bg-stone-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-stone-500 focus:outline-none focus:border-orange-500 font-medium">
-        </div>
-        <div>
-          <label class="block text-[10px] font-bold text-stone-300 mb-0.5" for="reg-referral">Partner Referral</label>
-          <input id="reg-referral" type="text" placeholder="CARD-PARTNER99" class="w-full bg-stone-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-stone-500 focus:outline-none focus:border-orange-500 font-medium font-mono">
-        </div>
-      </div>
-
-      <div class="flex items-start gap-2 pt-1">
-        <input type="checkbox" id="reg-terms" checked class="mt-0.5 rounded border-stone-700 text-orange-500 focus:ring-orange-500">
-        <label for="reg-terms" class="text-[10px] text-stone-400 leading-tight">
-          I agree to the <span class="text-orange-400 font-bold">Partner Terms & Privacy Policy</span>.
+        <label class="block text-xs font-bold text-white mb-1" for="reg-name">
+          Owner / Merchant Full Name *
         </label>
+        <div class="relative">
+          <div class="absolute inset-y-0 left-3.5 flex items-center pointer-events-none text-stone-400">
+            <i data-lucide="user" class="w-4 h-4"></i>
+          </div>
+          <input
+            id="reg-name"
+            type="text"
+            placeholder="e.g. Aarav Rajput"
+            class="w-full bg-stone-950/80 border border-white/10 rounded-2xl pl-10 pr-4 py-2.5 text-xs font-medium text-white placeholder-stone-500 focus:outline-none focus:border-orange-500"
+          />
+        </div>
       </div>
 
-      <button type="button" onclick="submitAuth()" class="w-full py-2.5 bg-gradient-to-r from-orange-500 to-amber-500 text-white font-black text-xs uppercase tracking-wider rounded-2xl shadow-lg shadow-orange-500/20 active-press flex items-center justify-center gap-1.5 mt-1">
-        <span>Create Account & Get Code</span>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs font-bold text-white mb-1" for="reg-phone">
+            Mobile Number (India) *
+          </label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-3.5 flex items-center pointer-events-none text-stone-400">
+              <i data-lucide="phone" class="w-4 h-4"></i>
+            </div>
+            <input
+              id="reg-phone"
+              type="tel"
+              placeholder="9876543210"
+              class="w-full bg-stone-950/80 border border-white/10 rounded-2xl pl-10 pr-4 py-2.5 text-xs font-medium text-white placeholder-stone-500 focus:outline-none focus:border-orange-500"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-white mb-1" for="reg-email">
+            Business Email
+          </label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-3.5 flex items-center pointer-events-none text-stone-400">
+              <i data-lucide="mail" class="w-4 h-4"></i>
+            </div>
+            <input
+              id="reg-email"
+              type="email"
+              placeholder="merchant@servesmile.com"
+              class="w-full bg-stone-950/80 border border-white/10 rounded-2xl pl-10 pr-4 py-2.5 text-xs font-medium text-white placeholder-stone-500 focus:outline-none focus:border-orange-500"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs font-bold text-white mb-1" for="reg-pw">
+            Create Password *
+          </label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-3.5 flex items-center pointer-events-none text-stone-400">
+              <i data-lucide="lock" class="w-4 h-4"></i>
+            </div>
+            <input
+              id="reg-pw"
+              type="password"
+              placeholder="Min. 8 characters"
+              class="w-full bg-stone-950/80 border border-white/10 rounded-2xl pl-10 pr-4 py-2.5 text-xs font-medium text-white placeholder-stone-500 focus:outline-none focus:border-orange-500"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-white mb-1" for="reg-referral">
+            Referral Code (Optional)
+          </label>
+          <input
+            id="reg-referral"
+            type="text"
+            placeholder="PROMO2026"
+            class="w-full bg-stone-950/80 border border-white/10 rounded-2xl px-3.5 py-2.5 text-xs font-mono font-bold text-amber-400 placeholder-stone-500 focus:outline-none focus:border-orange-500 uppercase"
+          />
+        </div>
+      </div>
+
+      <button
+        type="submit"
+        class="w-full py-3.5 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black text-xs uppercase tracking-wider rounded-2xl shadow-xl shadow-orange-500/25 active-press transition cursor-pointer flex items-center justify-center gap-2 mt-2"
+      >
+        <span>Register & Get 6-Digit OTP</span>
         <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
       </button>
     </form>
 
-    <div class="text-center pt-1 border-t border-white/5">
-      <div class="text-[9px] text-stone-500 font-mono flex items-center justify-center gap-1">
-        <i data-lucide="shield-check" class="w-3 h-3 text-emerald-400"></i>
-        <span>Bank-Grade 256-bit Encrypted Merchant Terminal</span>
+    <!-- OTP VERIFY MODAL / VIEW (Dual-Channel Verification) -->
+    <div id="view-otp" class="space-y-4 hidden animate-fade-in text-center">
+      <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto border border-emerald-500/30">
+        <i data-lucide="shield-check" class="w-6 h-6"></i>
       </div>
+      <div>
+        <div class="text-xs font-bold text-white">Dual-Channel OTP Sent</div>
+        <div class="text-[10px] text-stone-400 font-mono mt-0.5">Code delivered to +91 9876543210</div>
+      </div>
+      <div class="flex justify-center gap-2 py-2">
+        <input type="text" maxlength="1" value="8" class="w-9 h-11 bg-stone-950 border border-orange-500/80 rounded-xl text-center font-mono font-black text-base text-white focus:outline-none ring-2 ring-orange-500/30">
+        <input type="text" maxlength="1" value="4" class="w-9 h-11 bg-stone-950 border border-orange-500/80 rounded-xl text-center font-mono font-black text-base text-white focus:outline-none ring-2 ring-orange-500/30">
+        <input type="text" maxlength="1" value="2" class="w-9 h-11 bg-stone-950 border border-orange-500/80 rounded-xl text-center font-mono font-black text-base text-white focus:outline-none ring-2 ring-orange-500/30">
+        <input type="text" maxlength="1" value="9" class="w-9 h-11 bg-stone-950 border border-orange-500/80 rounded-xl text-center font-mono font-black text-base text-white focus:outline-none ring-2 ring-orange-500/30">
+        <input type="text" maxlength="1" value="1" class="w-9 h-11 bg-stone-950 border border-orange-500/80 rounded-xl text-center font-mono font-black text-base text-white focus:outline-none ring-2 ring-orange-500/30">
+        <input type="text" maxlength="1" value="6" class="w-9 h-11 bg-stone-950 border border-orange-500/80 rounded-xl text-center font-mono font-black text-base text-white focus:outline-none ring-2 ring-orange-500/30">
+      </div>
+      <button type="button" class="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-black text-xs rounded-2xl shadow-lg shadow-emerald-500/25 active-press flex items-center justify-center gap-1.5">
+        <i data-lucide="check" class="w-4 h-4"></i>
+        <span>Verify & Enter Portal</span>
+      </button>
     </div>
+
   </div>
 
   <script>
     lucide.createIcons();
 
-    function setMode(mode) {
-      if (mode === 'login') {
-        document.getElementById('tab-login').className = 'flex-1 py-1.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-xs';
-        document.getElementById('tab-register').className = 'flex-1 py-1.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 text-stone-400 hover:text-white bg-transparent';
-        document.getElementById('form-login').classList.remove('hidden');
-        document.getElementById('form-register').classList.add('hidden');
+    function setLang(lang) {
+      document.querySelectorAll('.lang-btn').forEach(b => {
+        b.classList.remove('active', 'bg-gradient-to-r', 'from-orange-500', 'to-amber-500', 'text-white', 'shadow-sm', 'font-black');
+        b.classList.add('text-stone-400', 'font-bold');
+      });
+      event.target.classList.add('active', 'bg-gradient-to-r', 'from-orange-500', 'to-amber-500', 'text-white', 'shadow-sm', 'font-black');
+      event.target.classList.remove('text-stone-400');
+
+      const desc = document.getElementById('txt-app-desc');
+      if (lang === 'hi') {
+        desc.textContent = 'कैशियर पीओएस प्रबंधित करने और क्यूआर कार्ड स्कैन करने के लिए साइन इन करें';
+      } else if (lang === 'pa') {
+        desc.textContent = 'ਕੈਸ਼ੀਅਰ ਪੀਓਐਸ ਪ੍ਰਬੰਧਿਤ ਕਰਨ ਅਤੇ ਕਿਊਆਰ ਕਾਰਡ ਸਕੈਨ ਕਰਨ ਲਈ ਸਾਈਨ ਇਨ ਕਰੋ';
+      } else if (lang === 'gu') {
+        desc.textContent = 'કેશિયર પીઓએસ મેનેજ કરવા અને ક્યૂઆર કાર્ડ સ્કેન કરવા માટે સાઇન ઇન કરો';
       } else {
-        document.getElementById('tab-register').className = 'flex-1 py-1.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-xs';
-        document.getElementById('tab-login').className = 'flex-1 py-1.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 text-stone-400 hover:text-white bg-transparent';
-        document.getElementById('form-register').classList.remove('hidden');
-        document.getElementById('form-login').classList.add('hidden');
+        desc.textContent = 'Sign in to manage cashier POS, scan QR cards & track revenue';
       }
     }
 
-    function setLang(lang) {
-      document.querySelectorAll('.lang-btn').forEach(b => b.className = 'lang-btn px-2.5 py-0.5 rounded-lg text-[10px] font-bold text-stone-400 hover:text-white');
-      event.currentTarget.className = 'lang-btn active px-2.5 py-0.5 rounded-lg text-[10px] font-black bg-orange-500 text-white';
+    function setMode(mode) {
+      const loginTab = document.getElementById('tab-login');
+      const regTab = document.getElementById('tab-register');
+      const formLogin = document.getElementById('form-login');
+      const formReg = document.getElementById('form-register');
+      const viewOtp = document.getElementById('view-otp');
+
+      viewOtp.classList.add('hidden');
+
+      if (mode === 'login') {
+        loginTab.className = 'flex-1 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-md';
+        regTab.className = 'flex-1 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 text-stone-400 hover:text-white bg-transparent';
+        formLogin.classList.remove('hidden');
+        formReg.classList.add('hidden');
+      } else {
+        regTab.className = 'flex-1 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-md';
+        loginTab.className = 'flex-1 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 text-stone-400 hover:text-white bg-transparent';
+        formReg.classList.remove('hidden');
+        formLogin.classList.add('hidden');
+      }
+    }
+
+    function togglePasswordVisibility(id) {
+      const el = document.getElementById(id);
+      if (el.type === 'password') {
+        el.type = 'text';
+      } else {
+        el.type = 'password';
+      }
     }
 
     function submitAuth() {
-      // Mock submit handler
+      document.getElementById('form-login').classList.add('hidden');
+      document.getElementById('form-register').classList.add('hidden');
+      document.getElementById('view-otp').classList.remove('hidden');
     }
-
-    window.authTwin = {
-      setMode: (m) => setMode(m),
-      fillLogin: (id, pw) => {
-        document.getElementById('login-id').value = id;
-        document.getElementById('login-pw').value = pw;
-      },
-      fillRegister: (name, phone, email, pw, ref) => {
-        document.getElementById('reg-name').value = name;
-        document.getElementById('reg-phone').value = phone;
-        document.getElementById('reg-email').value = email;
-        document.getElementById('reg-pw').value = pw;
-        document.getElementById('reg-referral').value = ref;
-      }
-    };
   </script>
 </body>
 </html>
