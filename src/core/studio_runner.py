@@ -80,8 +80,8 @@ CURSOR_INJECTION_JS = """
     backdropEl.id = 'studio-spotlight-backdrop';
     backdropEl.style.position = 'fixed';
     backdropEl.style.inset = '0';
-    backdropEl.style.backgroundColor = 'rgba(0, 0, 0, 0.85)';
-    backdropEl.style.backdropFilter = 'blur(8px)';
+    backdropEl.style.backgroundColor = 'rgba(0, 0, 0, 0.35)';
+    backdropEl.style.backdropFilter = 'blur(2px)';
     backdropEl.style.zIndex = '999990';
     backdropEl.style.opacity = '0';
     backdropEl.style.transition = 'opacity 0.35s ease';
@@ -98,9 +98,9 @@ CURSOR_INJECTION_JS = """
 
     el.style.position = (getComputedStyle(el).position === 'static') ? 'relative' : el.style.position;
     el.style.zIndex = '999995';
-    el.style.transition = 'transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease';
-    el.style.transform = `perspective(1000px) scale(${scale})`;
-    el.style.boxShadow = '0 0 55px rgba(249, 115, 22, 0.85), 0 0 0 2.5px rgba(249, 115, 22, 1), 0 25px 50px -10px rgba(0, 0, 0, 0.95)';
+    el.style.transition = 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease';
+    el.style.transform = `scale(${scale})`;
+    el.style.boxShadow = '0 0 35px rgba(249, 115, 22, 0.8), 0 0 0 2px rgba(249, 115, 22, 0.95)';
   };
 
   window.clearSpotlight = () => {
@@ -153,15 +153,15 @@ def draw_phone_frame(screen_img):
     screen_pil = Image.fromarray(screen_rgb).convert("RGBA")
     mask = Image.new("L", (sw, sh), 0)
     mask_draw = ImageDraw.Draw(mask)
-    mask_draw.rounded_rectangle([0, 0, sw, sh], radius=38, fill=255)
+    mask_draw.rounded_rectangle([0, 0, sw, sh], radius=32, fill=255)
     frame.paste(screen_pil, (38, 38), mask)
     
-    # Dynamic Island Pill
-    draw.rounded_rectangle([bezel_w//2 - 42 + 20, 48, bezel_w//2 + 42 + 20, 76], radius=14, fill=(0, 0, 0, 255))
-    draw.ellipse([bezel_w//2 + 18 + 20, 56, bezel_w//2 + 30 + 20, 68], fill=(18, 24, 42, 255))
+    # Sleek Micro Dynamic Island (higher up in bezel so it NEVER overlaps screen headers!)
+    draw.rounded_rectangle([bezel_w//2 - 30 + 20, 24, bezel_w//2 + 30 + 20, 36], radius=6, fill=(0, 0, 0, 255))
+    draw.ellipse([bezel_w//2 + 15 + 20, 27, bezel_w//2 + 23 + 20, 34], fill=(18, 24, 42, 255))
     
     # Home Indicator Bar
-    draw.rounded_rectangle([bezel_w//2 - 60 + 20, bezel_h - 2 + 20, bezel_w//2 + 60 + 20, bezel_h + 3 + 20], radius=3, fill=(210, 210, 215, 180))
+    draw.rounded_rectangle([bezel_w//2 - 50 + 20, bezel_h - 2 + 20, bezel_w//2 + 50 + 20, bezel_h + 2 + 20], radius=2, fill=(210, 210, 215, 140))
     
     return cv2.cvtColor(np.array(frame), cv2.COLOR_RGBA2BGRA)
 
@@ -302,8 +302,8 @@ class StudioEngine:
             font_narr = font_title
             font_step = font_title
             
-        phone_x, phone_y = 1160, 56
-        last_frame = np.zeros((932, 430, 3), dtype=np.uint8)
+        layout_mode = scene.get("layout", "split")
+        benefit = scene.get("benefit", "⚡ Instant 0ms Checkout • Guaranteed Revenue Growth")
         
         for frame_idx in range(total_frames):
             t = frame_idx / float(total_frames)
@@ -314,11 +314,18 @@ class StudioEngine:
             else: frame = last_frame
             
             framed_phone = draw_phone_frame(frame)
-            float_offset_y = int(np.sin(t * np.pi * 2) * 4)
+            float_offset_y = int(np.sin(t * np.pi * 2) * 5)
             
             canvas = bg_template.copy()
             ph_h, ph_w = framed_phone.shape[:2]
-            cur_y = phone_y + float_offset_y
+            
+            if layout_mode == "center":
+                phone_x = int((WIDTH - ph_w) / 2)
+                cur_y = 56 + float_offset_y
+            else:
+                # Dynamic smooth camera motion (gliding gently during demonstration)
+                phone_x = int(1170 - 25 * np.sin(t * np.pi))
+                cur_y = 56 + float_offset_y
             
             roi = canvas[cur_y:cur_y+ph_h, phone_x:phone_x+ph_w]
             alpha = framed_phone[:, :, 3] / 255.0
@@ -329,55 +336,75 @@ class StudioEngine:
             pil_img = Image.fromarray(cv2.cvtColor(canvas, cv2.COLOR_BGR2RGB))
             draw = ImageDraw.Draw(pil_img)
             
-            # Step & Badge
-            draw.rounded_rectangle([120, 130, 260, 164], radius=16, fill=(249, 115, 22, 45), outline=(249, 115, 22, 190), width=1)
-            draw.text((138, 138), f"STEP {step_num:02d} / {total_steps:02d}", font=font_step, fill=(255, 180, 90))
-            
-            draw.rounded_rectangle([120, 182, 750, 230], radius=20, fill=(30, 30, 36, 230), outline=(245, 158, 11, 150), width=1)
-            draw.text((140, 194), badge, font=font_badge, fill=(255, 205, 110))
-            
-            # Title
-            title_words = title.split(" ")
-            if len(title) > 28:
-                t_line1 = " ".join(title_words[:4])
-                t_line2 = " ".join(title_words[4:])
-                draw.text((120, 255), t_line1, font=font_title, fill=(255, 255, 255))
-                draw.text((120, 308), t_line2, font=font_title, fill=(255, 255, 255))
-                sub_y = 370
+            if layout_mode == "center":
+                # Centered Public Showcase Overlay
+                draw.rounded_rectangle([140, 120, 580, 240], radius=24, fill=(20, 20, 24, 230), outline=(249, 115, 22, 180), width=2)
+                draw.text((165, 145), "PUBLIC DISCOVERY PLATFORM", font=font_step, fill=(249, 115, 22))
+                draw.text((165, 175), "Live On ServeSmile App", font=font_title, fill=(255, 255, 255))
+                
+                draw.rounded_rectangle([1340, 120, 1780, 240], radius=24, fill=(20, 20, 24, 230), outline=(16, 185, 129, 180), width=2)
+                draw.text((1365, 145), "FOOT TRAFFIC & CUSTOMERS", font=font_step, fill=(52, 211, 153))
+                draw.text((1365, 175), "1.2k+ Active Members", font=font_title, fill=(255, 255, 255))
+                
+                # Bottom Voiceover Card
+                draw.rounded_rectangle([320, 840, 1600, 960], radius=24, fill=(18, 18, 22, 240), outline=(55, 55, 65, 220), width=1)
+                draw.text((360, 860), "MERCHANT ADVANTAGE", font=font_step, fill=(249, 115, 22))
+                draw.text((360, 895), narration, font=font_narr, fill=(245, 245, 250))
             else:
-                draw.text((120, 255), title, font=font_title, fill=(255, 255, 255))
-                sub_y = 320
+                # Standard Split Layout with Left Motion Graphic Storyboard
+                # Step & Badge
+                draw.rounded_rectangle([120, 110, 260, 144], radius=16, fill=(249, 115, 22, 45), outline=(249, 115, 22, 190), width=1)
+                draw.text((138, 118), f"STEP {step_num:02d} / {total_steps:02d}", font=font_step, fill=(255, 180, 90))
                 
-            draw.text((120, sub_y), subtitle, font=font_sub, fill=(200, 200, 210))
-            
-            # Progress Bar
-            bar_w = 720
-            draw.rounded_rectangle([120, 460, 120 + bar_w, 468], radius=4, fill=(45, 45, 52))
-            fill_w = int(bar_w * t)
-            if fill_w > 4:
-                draw.rounded_rectangle([120, 460, 120 + fill_w, 468], radius=4, fill=(249, 115, 22))
+                draw.rounded_rectangle([120, 160, 780, 208], radius=20, fill=(30, 30, 36, 230), outline=(245, 158, 11, 150), width=1)
+                draw.text((140, 172), badge, font=font_badge, fill=(255, 205, 110))
                 
-            # Voiceover Card
-            draw.rounded_rectangle([120, 740, 960, 920], radius=24, fill=(20, 20, 24, 230), outline=(55, 55, 65, 220), width=1)
-            draw.text((150, 765), "SERVESMILE DEMONSTRATION GUIDE", font=font_step, fill=(249, 115, 22))
-            
-            words = narration.split(" ")
-            lines = []
-            cur = []
-            for w in words:
-                cur.append(w)
-                if len(" ".join(cur)) > 55:
-                    lines.append(" ".join(cur))
-                    cur = []
-            if cur: lines.append(" ".join(cur))
-            
-            ny = 798
-            for l in lines[:4]:
-                draw.text((150, ny), l, font=font_narr, fill=(240, 240, 245))
-                ny += 28
+                # Title & Subtitle
+                title_words = title.split(" ")
+                if len(title) > 28:
+                    t_line1 = " ".join(title_words[:4])
+                    t_line2 = " ".join(title_words[4:])
+                    draw.text((120, 230), t_line1, font=font_title, fill=(255, 255, 255))
+                    draw.text((120, 280), t_line2, font=font_title, fill=(255, 255, 255))
+                    sub_y = 340
+                else:
+                    draw.text((120, 230), title, font=font_title, fill=(255, 255, 255))
+                    sub_y = 290
+                    
+                draw.text((120, sub_y), subtitle, font=font_sub, fill=(200, 200, 210))
                 
-            draw.text((120, 980), "ServeSmile Merchant OS  •  Exhaustive Platform Demonstration", font=font_sub, fill=(125, 125, 135))
-            
+                # Key Performance Benefit Pill
+                draw.rounded_rectangle([120, sub_y + 40, 780, sub_y + 90], radius=18, fill=(16, 185, 129, 25), outline=(16, 185, 129, 160), width=1)
+                draw.text((140, sub_y + 54), benefit, font=font_step, fill=(52, 211, 153))
+                
+                # Progress Bar
+                bar_w = 720
+                draw.rounded_rectangle([120, 520, 120 + bar_w, 528], radius=4, fill=(45, 45, 52))
+                fill_w = int(bar_w * t)
+                if fill_w > 4:
+                    draw.rounded_rectangle([120, 520, 120 + fill_w, 528], radius=4, fill=(249, 115, 22))
+                    
+                # Voiceover Card
+                draw.rounded_rectangle([120, 720, 960, 910], radius=24, fill=(20, 20, 24, 230), outline=(55, 55, 65, 220), width=1)
+                draw.text((150, 745), "MERCHANT DEMONSTRATION GUIDE", font=font_step, fill=(249, 115, 22))
+                
+                words = narration.split(" ")
+                lines = []
+                cur = []
+                for w in words:
+                    cur.append(w)
+                    if len(" ".join(cur)) > 55:
+                        lines.append(" ".join(cur))
+                        cur = []
+                if cur: lines.append(" ".join(cur))
+                
+                ny = 778
+                for l in lines[:4]:
+                    draw.text((150, ny), l, font=font_narr, fill=(240, 240, 245))
+                    ny += 28
+                    
+                draw.text((120, 970), "ServeSmile Merchant OS  •  Empowering Retail & Dining Partners", font=font_sub, fill=(125, 125, 135))
+                
             frame_bgr = cv2.cvtColor(np.array(pil_img), cv2.COLOR_RGB2BGR)
             out_writer.write(frame_bgr)
             
